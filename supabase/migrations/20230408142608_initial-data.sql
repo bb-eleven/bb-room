@@ -30,7 +30,7 @@ INSERT INTO category (name) VALUES
   ('phased out'),
   ('restricted');
 
-INSERT INTO location (code) VALUES ('out'), ('a1'), ('a2');
+INSERT INTO location (code) VALUES ('out'), ('a1'), ('a2'), ('tbc');
 
 CREATE OR REPLACE PROCEDURE insert_item(
   _item_arr item[],

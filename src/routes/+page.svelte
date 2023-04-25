@@ -1,2 +1,11 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import { createTransaction } from '$lib/db/create-transaction';
+
+	function click() {
+		createTransaction('who', [{ item_variant_id: 28, quantity: 10, to_location_id: 2 }]);
+	}
+</script>
+
+<ul>
+	<button on:click={click}>createTransaction</button>
+</ul>

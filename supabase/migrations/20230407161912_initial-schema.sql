@@ -20,7 +20,8 @@ CREATE TABLE category (
 
 CREATE TABLE item_category (
     item_id INTEGER NOT NULL REFERENCES item (id),
-    category_id INTEGER NOT NULL REFERENCES category (id)
+    category_id INTEGER NOT NULL REFERENCES category (id),
+    PRIMARY KEY (item_id, category_id)
 );
 
 CREATE TABLE item_variant_category (
@@ -44,12 +45,13 @@ CREATE TABLE transaction_detail (
     transaction_id INTEGER NOT NULL REFERENCES transaction (id),
     item_variant_id INTEGER NOT NULL REFERENCES item_variant (id),
     quantity SMALLINT NOT NULL,
-    from_location_id INTEGER NOT NULL REFERENCES location (id),
-    to_location_id INTEGER NOT NULL REFERENCES location (id)
+    from_location_id INTEGER NULL REFERENCES location (id),
+    to_location_id INTEGER NULL REFERENCES location (id)
 );
 
 CREATE TABLE item_variant_location (
     item_variant_id INTEGER NOT NULL REFERENCES item_variant (id),
     location_id INTEGER NOT NULL REFERENCES location (id),
-    quantity INTEGER NOT NULL
+    quantity INTEGER NOT NULL,
+    PRIMARY KEY (item_variant_id, location_id)
 );
