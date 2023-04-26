@@ -1,3 +1,3 @@
 export enum DbFunction {
-  UpdateLocationQuantity = "update_location_quantity"
+	UpdateLocationQuantity = 'update_location_quantity',
 }
