@@ -9,5 +9,5 @@ export type ItemView = {
 	category_ids?: number[];
 	category_names?: string[];
 	location_codes?: string[];
-	location_quantities?: string[];
+	location_quantities?: number[];
 };
