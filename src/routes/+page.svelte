@@ -1,11 +1,1 @@
-<script>
-	import { createTransaction } from '$lib/db/create-transaction';
-
-	function click() {
-		createTransaction('who', [{ item_variant_id: 28, quantity: 10, to_location_id: 2 }]);
-	}
-</script>
-
-<ul>
-	<button on:click={click}>createTransaction</button>
-</ul>
+<div class="h-[100vh] flex items-center justify-center"><h1 class="text-4xl">It is da BB room</h1></div>
