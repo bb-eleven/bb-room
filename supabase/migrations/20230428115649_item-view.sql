@@ -28,3 +28,28 @@ LEFT JOIN (
   INNER JOIN item i ON i.id = il.item_id
   GROUP BY i.id
 ) l ON l.item_id = i.id;
+
+CREATE FUNCTION filter_item_view(
+  _name_query citext,
+  _category_names citext[],
+  _location_codes citext[]
+) RETURNS
+ TABLE (
+  id integer,
+  name citext,
+  variant_name citext,
+  category_ids integer[],
+  category_names citext[],
+  location_codes citext[],
+  location_quantities integer[]
+)
+  LANGUAGE plpgsql
+  AS $$
+BEGIN
+  RETURN QUERY
+  SELECT * FROM item_view iv
+  WHERE (iv.name || ' ' || coalesce(iv.variant_name, ''))::citext LIKE _name_query
+  AND (cardinality(_category_names) = 0 OR iv.category_names && _category_names)
+  AND (cardinality(_location_codes) = 0 OR iv.location_codes && _location_codes);
+END;
+$$;
