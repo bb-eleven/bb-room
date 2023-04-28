@@ -39,3 +39,12 @@ ALTER TABLE item_variant_location RENAME TO item_location;
 ALTER TABLE item_category RENAME COLUMN item_variant_id TO item_id;
 ALTER TABLE item_location RENAME COLUMN item_variant_id TO item_id;
 ALTER TABLE transaction_detail RENAME COLUMN item_variant_id TO item_id;
+
+-- Rename constaints
+ALTER TABLE item RENAME CONSTRAINT item_variant_pkey TO item_pkey;
+ALTER TABLE item_category RENAME CONSTRAINT item_variant_category_item_variant_id_fkey TO item_category_item_id_fkey;
+ALTER TABLE item_category RENAME CONSTRAINT item_variant_category_category_id_fkey TO item_category_category_id_fkey;
+ALTER TABLE item_location RENAME CONSTRAINT item_variant_location_pkey TO item_location_pkey;
+ALTER TABLE item_location RENAME CONSTRAINT item_variant_location_item_variant_id_fkey TO item_location_item_id_fkey;
+ALTER TABLE item_location RENAME CONSTRAINT item_variant_location_location_id_fkey TO item_location_location_id_fkey;
+ALTER TABLE transaction_detail RENAME CONSTRAINT transaction_detail_item_variant_id_fkey TO transaction_detail_item_id_fkey;
