@@ -9,12 +9,13 @@ module.exports = {
 				'mirage': {
 					DEFAULT: '#191F2D',
 					darker: '#151B29',
+					'darker-shadow': '#0A101E',
 					lighter: '#1C2231'
 				},
 				'cadet-blue': '#A0A8C3',
 				'comet': {
 					DEFAULT: '#636985',
-					darker: '#434965'
+					darker: '#434965',
 				},
 				'orange-red-crayola': '#FF5A5F',
 				'cultured': '#F5F5F5',

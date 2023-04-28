@@ -35,7 +35,7 @@
     <span>v</span>
   </div>
   {#if showOptions}
-    <div class="absolute p-2 mr-2 space-y-2 bg-mirage min-w-fit h-fit max-h-[300px] overflow-y-scroll rounded drop-shadow-xl"
+    <div class="absolute p-2 mr-2 space-y-2 bg-mirage min-w-fit h-fit max-h-[300px] overflow-y-scroll rounded drop-shadow-2xl shadow-lg shadow-mirage-darker-shadow/60"
       use:clickOutside={toggleOptions}
     >
       {#each options as item, i}
