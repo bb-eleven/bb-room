@@ -4,7 +4,11 @@
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import TransactionDetail from '$lib/components/TransactionDetail.svelte';
 	import { DbFunction } from '$lib/db/functions.js';
-	import type { Category, Location, TransactionDetail as DbTransactionDetail } from '$lib/db/tables';
+	import type {
+		Category,
+		Location,
+		TransactionDetail as DbTransactionDetail,
+	} from '$lib/db/tables';
 	import { type ItemView, DbView } from '$lib/db/views.js';
 	import { supabase } from '$lib/supabase-client.js';
 	import { inou } from '$lib/utils.js';
@@ -47,15 +51,19 @@
 		itemViews = data as ItemView[];
 	};
 
-  let selectedItems = [undefined];
+	let selectedItems = [undefined];
 
-  const addItem = () => {
-    selectedItems.push(undefined);
-    selectedItems = selectedItems;
-  }
+	const addItem = () => {
+		selectedItems.push(undefined);
+		selectedItems = selectedItems;
+	};
 </script>
 
-<!-- TODO: make filter collapsible -->
+<!--
+  TODO
+  - Collapsible filter
+  - Submit button
+-->
 <div id="filter" class="mx-auto w-1/2 space-y-2">
 	<SearchBar bind:search={itemName} />
 	<CheckboxDropdown
@@ -77,9 +85,9 @@
 </div>
 
 <div class="mt-4 space-y-4">
-  <SearchBar bind:search={author} placeholder='Author' />
-  {#each selectedItems as selectedItem}
-    <TransactionDetail {itemViews} bind:selectedItem={selectedItem}/>
-  {/each}
-  <Button text="Add item" click={addItem} />
+	<SearchBar bind:search={author} placeholder="Author" />
+	{#each selectedItems as selectedItem}
+		<TransactionDetail {itemViews} bind:selectedItem />
+	{/each}
+	<Button text="Add item" click={addItem} />
 </div>

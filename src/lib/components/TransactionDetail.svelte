@@ -12,7 +12,7 @@
 	}
 
 	const createItemLabel = (itemView?: ItemView) => {
-    const { name, variant_name, category_names } = itemView as any;
+		const { name, variant_name, category_names } = itemView as any;
 		return (
 			(inou(variant_name) ? name : `${name} (${variant_name})`) + `; ${category_names?.join(', ')}`
 		);
@@ -20,21 +20,21 @@
 
 	let fromLocationLabel = 'From';
 	$: {
-    if (inou(fromLocation)) {
-      fromLocationLabel = 'From';
-    } else {
-      const { code, quantity } = fromLocation;
-      fromLocationLabel = `From "${code}"${inou(quantity) ? '' : '; qty: ' + quantity}`;
-    }
+		if (inou(fromLocation)) {
+			fromLocationLabel = 'From';
+		} else {
+			const { code, quantity } = fromLocation;
+			fromLocationLabel = `From "${code}"${inou(quantity) ? '' : '; qty: ' + quantity}`;
+		}
 	}
 	let toLocationLabel = 'To';
 	$: {
-    if (inou(toLocation)) {
-      toLocationLabel = 'To';
-    } else {
-      const { code, quantity } = toLocation;
-      toLocationLabel = `To "${code}"${inou(quantity) ? '' : '; qty: ' + quantity}`;
-    }
+		if (inou(toLocation)) {
+			toLocationLabel = 'To';
+		} else {
+			const { code, quantity } = toLocation;
+			toLocationLabel = `To "${code}"${inou(quantity) ? '' : '; qty: ' + quantity}`;
+		}
 	}
 
 	const outside = 'Outside';
@@ -56,7 +56,7 @@
 			return [null as any];
 		}
 		const { location_codes, location_quantities } = itemView;
-    console.log(toLocation)
+		console.log(toLocation);
 		return (fromLocation?.code === outside ? [] : [{ code: outside }]).concat(
 			mapLocationOptions(location_codes, location_quantities),
 		);
@@ -77,6 +77,7 @@
   TODO
   - Remove button
   - Export TransactionDetail instead of ItemView
+  - Quantity
  -->
 <div class="bg-mirage-lighter p-2 space-y-2 rounded-md">
 	<Dropdown
