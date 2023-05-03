@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clickOutside } from '$lib/clickOutside';
+	import { clickOutside } from '$lib/click-outside';
 	import Checkbox from './Checkbox.svelte';
 
 	type CheckboxItem = any;

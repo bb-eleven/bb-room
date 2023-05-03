@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { clickOutside } from '$lib/clickOutside';
+	import { clickOutside } from '$lib/click-outside';
 
 	type CheckboxItem = any;
 
