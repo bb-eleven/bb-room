@@ -6,6 +6,8 @@
 
 	export let itemViews: ItemView[];
 	export let selectedItem: ItemView | undefined;
+	export let onRemove = () => {};
+
 	let itemLabel = 'Item';
 	$: {
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
@@ -75,7 +77,6 @@
 
 <!--
   TODO
-  - Remove button
   - Export TransactionDetail instead of ItemView
   - Quantity
  -->
@@ -98,4 +99,7 @@
 		getName={getLocationOptionName}
 		bind:selected={toLocation}
 	/>
+	<div class="flex justify-end p-1">
+		<button on:click={onRemove} class="bg-mirage-lightest rounded-lg px-2 py-1"> Remove </button>
+	</div>
 </div>

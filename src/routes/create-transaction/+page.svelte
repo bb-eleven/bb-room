@@ -57,6 +57,11 @@
 		selectedItems.push(undefined);
 		selectedItems = selectedItems;
 	};
+
+	const removeItem = (index: number) => {
+		selectedItems.splice(index, 1);
+		selectedItems = selectedItems;
+	};
 </script>
 
 <!--
@@ -86,8 +91,8 @@
 
 <div class="mt-4 space-y-4">
 	<SearchBar bind:search={author} placeholder="Author" />
-	{#each selectedItems as selectedItem}
-		<TransactionDetail {itemViews} bind:selectedItem />
+	{#each selectedItems as selectedItem, i}
+		<TransactionDetail onRemove={() => removeItem(i)} {itemViews} bind:selectedItem />
 	{/each}
 	<Button text="Add item" click={addItem} />
 </div>
