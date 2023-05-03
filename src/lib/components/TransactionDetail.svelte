@@ -79,6 +79,10 @@
   TODO
   - Export TransactionDetail instead of ItemView
   - Quantity
+  - Remove "Outside" option if either From or To is "Outside"
+  - Errors
+    - Quantity more than available
+    - Quantity less than 1
  -->
 <div class="bg-mirage-lighter p-2 space-y-2 rounded-md">
 	<Dropdown
