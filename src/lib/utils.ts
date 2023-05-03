@@ -1,1 +1,2 @@
-export const inou = (value: any) => value === null || value === undefined;
+export const inou = <T>(value: T | null | undefined): value is null | undefined =>
+	value === null || value === undefined;
