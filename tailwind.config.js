@@ -8,9 +8,11 @@ module.exports = {
 				'ship-cove': '#6E91B9',
 				'mirage': {
 					DEFAULT: '#191F2D',
+					dark: '#171D2B',
 					darker: '#151B29',
 					'darker-shadow': '#0A101E',
-					lighter: '#1C2231'
+					light: '#1C2231',
+					lighter: '#212739'
 				},
 				'cadet-blue': '#A0A8C3',
 				'comet': {
