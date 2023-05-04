@@ -6,6 +6,7 @@
 
 	export let itemViews: ItemView[];
 	export let selectedItem: ItemView | undefined;
+	export let showRemoveButton = true;
 	export let onRemove = () => {};
 
 	let itemLabel = 'Item';
@@ -106,7 +107,9 @@
 		getName={getLocationOptionName}
 		bind:selected={toLocation}
 	/>
-	<div class="flex justify-end p-1">
-		<button on:click={onRemove} class="bg-mirage-lightest rounded-lg px-2 py-1"> Remove </button>
-	</div>
+	{#if showRemoveButton}
+		<div class="flex justify-end p-1">
+			<button on:click={onRemove} class="bg-mirage-lightest rounded-lg px-2 py-1"> Remove </button>
+		</div>
+	{/if}
 </div>
