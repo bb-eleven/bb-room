@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { TransactionDetail } from '$lib/db/tables';
+	import type { CreateTransactionDetail } from '$lib/db/tables';
 	import type { ItemView } from '$lib/db/views';
 	import { inou } from '$lib/utils';
 	import Dropdown from './Dropdown.svelte';
@@ -7,26 +7,41 @@
 	export let itemViews: ItemView[];
 	export let showRemoveButton = true;
 	export let onRemove = () => {};
-
-	// To be bound
 	export let selectedItem: ItemView | undefined;
-	export let quantity: number | undefined = undefined;
-	export let fromLocation: LocationOption | undefined = undefined;
-	export let toLocation: LocationOption | undefined = undefined;
+	export let createTransactionDetail: CreateTransactionDetail | undefined = undefined;
 
+	let itemId: number | undefined;
 	let previousSelectedItemId: number | undefined;
-	let itemLabel = 'Item';
-	let fromLocationOptions: LocationOption[];
-	let toLocationOptions: LocationOption[];
+	let quantity: number | undefined;
+	let fromLocation: LocationOption | undefined;
+	let toLocation: LocationOption | undefined;
+
+	let fromLocationOptions: LocationOption[] = [];
+	let toLocationOptions: LocationOption[] = [];
 	type LocationOption = { code: string; quantity?: number };
 
+	let itemLabel = 'Item';
+	let fromLocationLabel = 'From';
+	let toLocationLabel = 'To';
+
 	$: {
+		itemId = selectedItem?.id;
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
-		if (previousSelectedItemId !== selectedItem?.id) {
+		if (previousSelectedItemId !== itemId) {
 			fromLocation = undefined;
 			toLocation = undefined;
 		}
-		previousSelectedItemId = selectedItem?.id;
+		previousSelectedItemId = itemId;
+	}
+
+	$: {
+		const fromLocationCode = fromLocation?.code;
+		createTransactionDetail = {
+			item_id: itemId,
+			quantity,
+			from_location_code: fromLocationCode === outside ? null : fromLocationCode,
+			to_location_code: toLocation?.code,
+		};
 	}
 
 	$: {
@@ -41,7 +56,6 @@
 		);
 	};
 
-	let fromLocationLabel = 'From';
 	$: {
 		if (inou(fromLocation)) {
 			fromLocationLabel = 'From';
@@ -50,7 +64,6 @@
 			fromLocationLabel = `From "${code}"${inou(quantity) ? '' : '; qty: ' + quantity}`;
 		}
 	}
-	let toLocationLabel = 'To';
 	$: {
 		if (inou(toLocation)) {
 			toLocationLabel = 'To';
@@ -86,9 +99,11 @@
 			mapLocationOptions(location_codes, location_quantities),
 		);
 	};
+
 	const mapLocationOptions = (location_codes?: string[], location_quantities?: number[]) => {
 		return location_codes?.map((code, i) => ({ code, quantity: location_quantities?.[i] })) ?? [];
 	};
+
 	const getLocationOptionName = (locationOption: LocationOption) => {
 		if (inou(locationOption)) {
 			return 'Select item first!';
@@ -96,11 +111,17 @@
 		const { code, quantity } = locationOption;
 		return `${code}: ${quantity ?? '-'}`;
 	};
+
+	const onQuantityBlur = (event: any) => {
+		const value = event.target.value;
+		if (value !== '') {
+			quantity = Number(value);
+		}
+	};
 </script>
 
 <!--
   TODO
-  - Export TransactionDetail instead of ItemView
   - Quantity
   - Errors
     - Quantity more than available
@@ -130,7 +151,7 @@
 			<input
 				type="number"
 				placeholder="Quantity"
-				bind:value={quantity}
+				on:blur={onQuantityBlur}
 				class="w-full bg-mirage placeholder:text-comet-darker text-comet select-none rounded-lg p-1 pl-2 active:outline-none focus:outline-none"
 			/>
 		</label>

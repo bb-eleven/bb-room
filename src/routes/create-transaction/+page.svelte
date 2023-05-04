@@ -4,19 +4,13 @@
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import TransactionDetail from '$lib/components/TransactionDetail.svelte';
 	import { DbFunction } from '$lib/db/functions.js';
-	import type {
-		Category,
-		Location,
-		TransactionDetail as DbTransactionDetail,
-	} from '$lib/db/tables';
+	import type { Category, Location, CreateTransactionDetail } from '$lib/db/tables';
 	import { type ItemView, DbView } from '$lib/db/views.js';
 	import { supabase } from '$lib/supabase-client.js';
-	import { inou } from '$lib/utils.js';
 
 	export let data;
 
 	let author: string;
-	let transactionDetails: DbTransactionDetail[];
 
 	let itemName: string;
 	let categoriesLabel = 'Categories';
@@ -51,16 +45,21 @@
 		itemViews = data as ItemView[];
 	};
 
-	let selectedItems = [undefined];
+	let selectedItems: (ItemView | undefined)[] = [undefined];
+	let createTransactionDetails: (CreateTransactionDetail | undefined)[] = [undefined];
 
 	const addItem = () => {
 		selectedItems.push(undefined);
 		selectedItems = selectedItems;
+		createTransactionDetails.push(undefined);
+		createTransactionDetails = createTransactionDetails;
 	};
 
 	const removeItem = (index: number) => {
 		selectedItems.splice(index, 1);
 		selectedItems = selectedItems;
+		createTransactionDetails.splice(index, 1);
+		createTransactionDetails = createTransactionDetails;
 	};
 </script>
 
@@ -96,7 +95,8 @@
 			showRemoveButton={i > 0}
 			onRemove={() => removeItem(i)}
 			{itemViews}
-			bind:selectedItem
+			{selectedItem}
+			bind:createTransactionDetail={createTransactionDetails[i]}
 		/>
 	{/each}
 	<Button text="Add item" click={addItem} />
