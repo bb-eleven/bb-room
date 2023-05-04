@@ -5,14 +5,20 @@
 	import Dropdown from './Dropdown.svelte';
 
 	export let itemViews: ItemView[];
-	export let selectedItem: ItemView | undefined;
-	let previousSelectedItemId: number | undefined;
 	export let showRemoveButton = true;
 	export let onRemove = () => {};
 
+	// To be bound
+	export let selectedItem: ItemView | undefined;
+	export let quantity: number | undefined = undefined;
+	export let fromLocation: LocationOption | undefined = undefined;
+	export let toLocation: LocationOption | undefined = undefined;
+
+	let previousSelectedItemId: number | undefined;
 	let itemLabel = 'Item';
 	let fromLocationOptions: LocationOption[];
 	let toLocationOptions: LocationOption[];
+	type LocationOption = { code: string; quantity?: number };
 
 	$: {
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
@@ -55,9 +61,6 @@
 	}
 
 	const outside = 'Outside';
-	type LocationOption = { code: string; quantity?: number };
-	let fromLocation: LocationOption | undefined;
-	let toLocation: LocationOption | undefined;
 
 	const createFromLocationOptions = (
 		toLocation?: LocationOption,
@@ -122,9 +125,17 @@
 		getName={getLocationOptionName}
 		bind:selected={toLocation}
 	/>
-	{#if showRemoveButton}
-		<div class="flex justify-end p-1">
+	<div class="flex justify-between py-1">
+		<label>
+			<input
+				type="number"
+				placeholder="Quantity"
+				bind:value={quantity}
+				class="w-full bg-mirage placeholder:text-comet-darker text-comet select-none rounded-lg p-1 pl-2 active:outline-none focus:outline-none"
+			/>
+		</label>
+		{#if showRemoveButton}
 			<button on:click={onRemove} class="bg-mirage-lightest rounded-lg px-2 py-1"> Remove </button>
-		</div>
-	{/if}
+		{/if}
+	</div>
 </div>
