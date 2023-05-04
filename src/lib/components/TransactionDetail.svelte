@@ -9,8 +9,13 @@
 	export let onRemove = () => {};
 
 	let itemLabel = 'Item';
+	let fromLocationOptions: LocationOption[];
+	let toLocationOptions: LocationOption[];
+
 	$: {
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
+		fromLocationOptions = createFromLocationOptions(toLocation);
+		toLocationOptions = createToLocationOptions(fromLocation);
 	}
 
 	const createItemLabel = (itemView?: ItemView) => {
@@ -44,21 +49,20 @@
 	let fromLocation: LocationOption;
 	let toLocation: LocationOption;
 
-	const createFromLocationOptions = (itemView?: ItemView): LocationOption[] => {
-		if (inou(itemView)) {
+	const createFromLocationOptions = (toLocation: LocationOption): LocationOption[] => {
+		if (inou(selectedItem)) {
 			return [null as any];
 		}
-		const { location_codes, location_quantities } = itemView;
+		const { location_codes, location_quantities } = selectedItem;
 		return (toLocation?.code === outside ? [] : [{ code: outside }]).concat(
 			mapLocationOptions(location_codes, location_quantities),
 		);
 	};
-	const createToLocationOptions = (itemView?: ItemView): LocationOption[] => {
-		if (inou(itemView)) {
+	const createToLocationOptions = (fromLocation: LocationOption): LocationOption[] => {
+		if (inou(selectedItem)) {
 			return [null as any];
 		}
-		const { location_codes, location_quantities } = itemView;
-		console.log(toLocation);
+		const { location_codes, location_quantities } = selectedItem;
 		return (fromLocation?.code === outside ? [] : [{ code: outside }]).concat(
 			mapLocationOptions(location_codes, location_quantities),
 		);
@@ -79,7 +83,6 @@
   TODO
   - Export TransactionDetail instead of ItemView
   - Quantity
-  - Remove "Outside" option if either From or To is "Outside"
   - Errors
     - Quantity more than available
     - Quantity less than 1
@@ -93,13 +96,13 @@
 	/>
 	<Dropdown
 		label={fromLocationLabel}
-		options={createFromLocationOptions(selectedItem)}
+		options={fromLocationOptions}
 		getName={getLocationOptionName}
 		bind:selected={fromLocation}
 	/>
 	<Dropdown
 		label={toLocationLabel}
-		options={createToLocationOptions(selectedItem)}
+		options={toLocationOptions}
 		getName={getLocationOptionName}
 		bind:selected={toLocation}
 	/>
