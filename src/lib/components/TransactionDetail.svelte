@@ -15,8 +15,11 @@
 
 	$: {
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
-		fromLocationOptions = createFromLocationOptions(toLocation);
-		toLocationOptions = createToLocationOptions(fromLocation);
+	}
+
+	$: {
+		fromLocationOptions = createFromLocationOptions(toLocation, selectedItem);
+		toLocationOptions = createToLocationOptions(fromLocation, selectedItem);
 	}
 
 	const createItemLabel = (itemView?: ItemView) => {
@@ -50,7 +53,10 @@
 	let fromLocation: LocationOption;
 	let toLocation: LocationOption;
 
-	const createFromLocationOptions = (toLocation: LocationOption): LocationOption[] => {
+	const createFromLocationOptions = (
+		toLocation: LocationOption,
+		selectedItem?: ItemView,
+	): LocationOption[] => {
 		if (inou(selectedItem)) {
 			return [null as any];
 		}
@@ -59,7 +65,10 @@
 			mapLocationOptions(location_codes, location_quantities),
 		);
 	};
-	const createToLocationOptions = (fromLocation: LocationOption): LocationOption[] => {
+	const createToLocationOptions = (
+		fromLocation: LocationOption,
+		selectedItem?: ItemView,
+	): LocationOption[] => {
 		if (inou(selectedItem)) {
 			return [null as any];
 		}
