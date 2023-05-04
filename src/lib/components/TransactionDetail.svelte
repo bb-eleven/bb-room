@@ -6,6 +6,7 @@
 
 	export let itemViews: ItemView[];
 	export let selectedItem: ItemView | undefined;
+	let previousSelectedItemId: number | undefined;
 	export let showRemoveButton = true;
 	export let onRemove = () => {};
 
@@ -15,6 +16,11 @@
 
 	$: {
 		itemLabel = inou(selectedItem) ? 'Item' : `Item: ${createItemLabel(selectedItem)}`;
+		if (previousSelectedItemId !== selectedItem?.id) {
+			fromLocation = undefined;
+			toLocation = undefined;
+		}
+		previousSelectedItemId = selectedItem?.id;
 	}
 
 	$: {
@@ -50,11 +56,11 @@
 
 	const outside = 'Outside';
 	type LocationOption = { code: string; quantity?: number };
-	let fromLocation: LocationOption;
-	let toLocation: LocationOption;
+	let fromLocation: LocationOption | undefined;
+	let toLocation: LocationOption | undefined;
 
 	const createFromLocationOptions = (
-		toLocation: LocationOption,
+		toLocation?: LocationOption,
 		selectedItem?: ItemView,
 	): LocationOption[] => {
 		if (inou(selectedItem)) {
@@ -66,7 +72,7 @@
 		);
 	};
 	const createToLocationOptions = (
-		fromLocation: LocationOption,
+		fromLocation?: LocationOption,
 		selectedItem?: ItemView,
 	): LocationOption[] => {
 		if (inou(selectedItem)) {
