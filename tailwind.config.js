@@ -22,8 +22,12 @@ module.exports = {
 				},
 				'orange-red-crayola': '#FF5A5F',
 				cultured: '#F5F5F5',
-				envy: '#93B19C',
-				quicksand: '#B99090',
+				envy: '#88967B',
+				red: '#A25C5D',
+				quicksand: {
+					DEFAULT: '#B99090',
+					dark: '#A98080',
+				},
 			},
 			fontFamily: {
 				logo: 'MeshedDisplay-SemiBold',

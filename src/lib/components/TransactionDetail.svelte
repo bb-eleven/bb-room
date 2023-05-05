@@ -8,7 +8,8 @@
 	export let showRemoveButton = true;
 	export let onRemove = () => {};
 	export let selectedItem: ItemView | undefined;
-	export let createTransactionDetail: CreateTransactionDetail | undefined = undefined;
+	export let createTransactionDetail: CreateTransactionDetail = {};
+	export let error: { messages: string[] } | undefined;
 
 	let itemId: number | undefined;
 	let previousSelectedItemId: number | undefined;
@@ -37,8 +38,8 @@
 	$: {
 		const fromLocationCode = fromLocation?.code;
 		createTransactionDetail = {
+			...createTransactionDetail,
 			item_id: itemId,
-			quantity,
 			from_location_code: fromLocationCode === outside ? null : fromLocationCode,
 			to_location_code: toLocation?.code,
 		};
@@ -151,7 +152,7 @@
 			<input
 				type="number"
 				placeholder="Quantity"
-				on:blur={onQuantityBlur}
+				bind:value={createTransactionDetail.quantity}
 				class="w-full bg-mirage placeholder:text-comet-darker text-comet select-none rounded-lg p-1 pl-2 active:outline-none focus:outline-none"
 			/>
 		</label>
@@ -159,4 +160,11 @@
 			<button on:click={onRemove} class="bg-mirage-lightest rounded-lg px-2 py-1"> Remove </button>
 		{/if}
 	</div>
+	{#if !inou(error)}
+		<div class="rounded-lg p-2 bg-red text-cultured">
+			{#each error.messages as message}
+				<div>{message}</div>
+			{/each}
+		</div>
+	{/if}
 </div>

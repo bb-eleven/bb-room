@@ -1,16 +1,20 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import CheckboxDropdown from '$lib/components/CheckboxDropdown.svelte';
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import TransactionDetail from '$lib/components/TransactionDetail.svelte';
+	import { createTransaction } from '$lib/db/create-transaction.js';
 	import { DbFunction } from '$lib/db/functions.js';
 	import type { Category, Location, CreateTransactionDetail } from '$lib/db/tables';
 	import { type ItemView, DbView } from '$lib/db/views.js';
 	import { supabase } from '$lib/supabase-client.js';
+	import { inou, ninou } from '$lib/utils.js';
 
 	export let data;
 
 	let author: string;
+	let authorError: { message: string } | undefined;
 
 	let itemName: string;
 	let categoriesLabel = 'Categories';
@@ -46,13 +50,17 @@
 	};
 
 	let selectedItems: (ItemView | undefined)[] = [undefined];
-	let createTransactionDetails: (CreateTransactionDetail | undefined)[] = [undefined];
+	let createTransactionDetails: CreateTransactionDetail[] = [{}];
+	let createTransactionDetailsErrors: ({ messages: string[] } | undefined)[] = [];
 
 	const addItem = () => {
 		selectedItems.push(undefined);
 		selectedItems = selectedItems;
-		createTransactionDetails.push(undefined);
+		createTransactionDetails.push({});
+		console.log(createTransactionDetails);
 		createTransactionDetails = createTransactionDetails;
+		createTransactionDetailsErrors.push(undefined);
+		createTransactionDetailsErrors = createTransactionDetailsErrors;
 	};
 
 	const removeItem = (index: number) => {
@@ -60,13 +68,49 @@
 		selectedItems = selectedItems;
 		createTransactionDetails.splice(index, 1);
 		createTransactionDetails = createTransactionDetails;
+		createTransactionDetailsErrors.splice(index, 1);
+		createTransactionDetailsErrors = createTransactionDetailsErrors;
+	};
+
+	const validateAuthor = () => {
+		authorError =
+			inou(author) || author.trim() === '' ? { message: 'Author cannot be null!' } : undefined;
+	};
+
+	const validateCreateTransactionDetail = (ctd: CreateTransactionDetail, index: number) => {
+		// const ctd = createTransactionDetails[index];
+		let messages = [];
+
+		if (inou(ctd.item_id)) {
+			messages.push('Item cannot be empty!');
+		}
+		if (ctd.from_location_code === undefined) {
+			messages.push('From Location cannot be empty!');
+		}
+		if (ctd.to_location_code === undefined) {
+			messages.push('To Location cannot be empty!');
+		}
+		if (inou(ctd.quantity)) {
+			messages.push('Quantity cannot be empty!');
+		}
+
+		createTransactionDetailsErrors[index] = messages.length === 0 ? undefined : { messages };
+	};
+	const submit = async () => {
+		validateAuthor();
+		createTransactionDetails.forEach(validateCreateTransactionDetail);
+
+		if (inou(authorError) && createTransactionDetailsErrors.filter(ninou).length === 0) {
+			createTransaction(author, createTransactionDetails);
+			createTransactionDetails = [{}];
+			selectedItems = [undefined];
+		}
 	};
 </script>
 
 <!--
   TODO
   - Collapsible filter
-  - Submit button
 -->
 <div id="filter" class="mx-auto w-1/2 space-y-2">
 	<SearchBar bind:search={itemName} />
@@ -89,15 +133,26 @@
 </div>
 
 <div class="mt-4 space-y-4">
-	<SearchBar bind:search={author} placeholder="Author" />
+	<SearchBar bind:search={author} placeholder="Author" onBlur={validateAuthor} />
+	{#if !inou(authorError)}
+		<div class="rounded-lg p-2 bg-red text-cultured">
+			{authorError.message}
+		</div>
+	{/if}
+
 	{#each selectedItems as selectedItem, i}
 		<TransactionDetail
 			showRemoveButton={i > 0}
 			onRemove={() => removeItem(i)}
 			{itemViews}
 			{selectedItem}
+			error={createTransactionDetailsErrors[i]}
 			bind:createTransactionDetail={createTransactionDetails[i]}
 		/>
 	{/each}
 	<Button text="Add item" click={addItem} />
+</div>
+
+<div class="my-2 w-full flex justify-center">
+	<button class="rounded-xl px-5 py-2 bg-envy text-mirage" on:click={submit}> Submit </button>
 </div>
