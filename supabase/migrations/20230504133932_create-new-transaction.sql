@@ -11,8 +11,8 @@ BEGIN
       RETURN _quantity;
     ELSE
       INSERT INTO item_location (item_id, location_id, quantity)
-      VALUES (_item_id, _location_id, delta_quantity);
-      RETURN delta_quantity;
+      VALUES (_item_id, _location_id, abs(delta_quantity));
+      RETURN abs(delta_quantity);
     END IF;
   END IF;
   RETURN 0;
