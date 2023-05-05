@@ -147,6 +147,7 @@
 			{itemViews}
 			bind:selectedItem
 			error={createTransactionDetailsErrors[i]}
+			locations={data.locations.map(({ code }) => ({ code }))}
 			bind:createTransactionDetail={createTransactionDetails[i]}
 		/>
 	{/each}

@@ -10,6 +10,7 @@
 	export let selectedItem: ItemView | undefined;
 	export let createTransactionDetail: CreateTransactionDetail = {};
 	export let error: { messages: string[] } | undefined;
+	export let locations: LocationOption[];
 
 	let itemId: number | undefined;
 	let previousSelectedItemId: number | undefined;
@@ -96,9 +97,13 @@
 			return [null as any];
 		}
 		const { location_codes, location_quantities } = selectedItem;
-		return (fromLocation?.code === outside ? [] : [{ code: outside }]).concat(
-			mapLocationOptions(location_codes, location_quantities),
-		);
+		for (let location of locations) {
+			const itemLocationCodeIndex = location_codes?.indexOf(location.code) ?? -1;
+			if (itemLocationCodeIndex !== -1) {
+				location.quantity = location_quantities?.[itemLocationCodeIndex];
+			}
+		}
+		return (fromLocation?.code === outside ? [] : [{ code: outside }]).concat(locations);
 	};
 
 	const mapLocationOptions = (location_codes?: string[], location_quantities?: number[]) => {
