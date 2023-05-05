@@ -57,7 +57,6 @@
 		selectedItems.push(undefined);
 		selectedItems = selectedItems;
 		createTransactionDetails.push({});
-		console.log(createTransactionDetails);
 		createTransactionDetails = createTransactionDetails;
 		createTransactionDetailsErrors.push(undefined);
 		createTransactionDetailsErrors = createTransactionDetailsErrors;
@@ -140,12 +139,13 @@
 		</div>
 	{/if}
 
+	<!-- TODO: find out why I need to bind selectedItem -->
 	{#each selectedItems as selectedItem, i}
 		<TransactionDetail
 			showRemoveButton={i > 0}
 			onRemove={() => removeItem(i)}
 			{itemViews}
-			{selectedItem}
+			bind:selectedItem
 			error={createTransactionDetailsErrors[i]}
 			bind:createTransactionDetail={createTransactionDetails[i]}
 		/>
