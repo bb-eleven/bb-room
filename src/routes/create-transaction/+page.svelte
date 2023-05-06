@@ -94,7 +94,7 @@
 		createTransactionDetails.forEach(validateCreateTransactionDetail);
 
 		if (inou(authorError) && createTransactionDetailsErrors.filter(ninou).length === 0) {
-			createTransaction(author, createTransactionDetails);
+			await createTransaction(author, createTransactionDetails);
 			location.reload();
 		}
 	};
