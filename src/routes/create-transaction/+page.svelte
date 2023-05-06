@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import CheckboxDropdown from '$lib/components/CheckboxDropdown.svelte';
 	import SearchBar from '$lib/components/SearchBar.svelte';
@@ -7,7 +6,7 @@
 	import { createTransaction } from '$lib/db/create-transaction.js';
 	import { DbFunction } from '$lib/db/functions.js';
 	import type { Category, Location, CreateTransactionDetail } from '$lib/db/tables';
-	import { type ItemView, DbView } from '$lib/db/views.js';
+	import type { ItemView } from '$lib/db/views.js';
 	import { supabase } from '$lib/supabase-client.js';
 	import { inou, ninou } from '$lib/utils.js';
 
@@ -31,12 +30,7 @@
 			? 'Locations'
 			: 'Locations: ' + selectedLocations.map(({ code }) => code).join(', ');
 
-	let itemViews: ItemView[] = [];
-
-	(async () => {
-		const { data, error } = await supabase.from(DbView.Item).select();
-		itemViews = data as ItemView[];
-	})();
+	let itemViews: ItemView[] = data.itemViews;
 
 	const search = async () => {
 		const { data, error } = await supabase
@@ -101,8 +95,7 @@
 
 		if (inou(authorError) && createTransactionDetailsErrors.filter(ninou).length === 0) {
 			createTransaction(author, createTransactionDetails);
-			createTransactionDetails = [{}];
-			selectedItems = [undefined];
+			location.reload();
 		}
 	};
 </script>

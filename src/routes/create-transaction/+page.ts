@@ -1,9 +1,16 @@
 import { DbTables, type Category, type Location } from '$lib/db/tables';
+import { DbView, type ItemView } from '$lib/db/views';
 import { supabase } from '$lib/supabase-client';
 
 export async function load() {
+	let itemViews: ItemView[];
 	let categories: Category[];
 	let locations: Location[];
+
+	{
+		const { data, error } = await supabase.from(DbView.Item).select();
+		itemViews = data as ItemView[];
+	}
 
 	{
 		const { data, error } = await supabase.from(DbTables.Category).select();
@@ -15,5 +22,5 @@ export async function load() {
 		locations = data as Location[];
 	}
 
-	return { categories, locations };
+	return { itemViews, categories, locations };
 }
