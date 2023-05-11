@@ -1,6 +1,6 @@
 FROM node:18 AS build
 
-COPY package*.json .
+COPY package*.json ./
 
 RUN npm ci --ignore-scripts
 
