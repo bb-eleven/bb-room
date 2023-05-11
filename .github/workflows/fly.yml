@@ -14,10 +14,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@master
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          file: ./Dockerfile
       - run: flyctl auth -t $FLY_API_TOKEN docker
       - run: echo "PACKAGE_JSON=$(jq -c . < package.json)" >> $GITHUB_ENV
       - run: echo 'VERSION=${{ fromJson(env.PACKAGE_JSON).version }}' >> $GITHUB_ENV
