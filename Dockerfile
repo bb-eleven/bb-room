@@ -16,9 +16,11 @@ RUN echo $VITE_SUPABASE_ANON_KEY >> .env.production
 RUN npm run build
 
 FROM node:18-alpine
-COPY --from=build /node_modules .
 COPY --from=build /build .
 COPY --from=build package.json package.json
+COPY --from=build package-lock.json package-lock.json
+
+RUN npm ci --ignore-scripts --omit dev
 
 EXPOSE 3000
 CMD ["node", "index"]
