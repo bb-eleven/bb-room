@@ -7,7 +7,7 @@ ARG VITE_SUPABASE_ANON_KEY
 
 COPY package*.json ./
 
-RUN npm ci --ignore-scripts
+RUN npm ci --ignore-scripts --omit dev
 
 COPY . .
 
@@ -16,6 +16,7 @@ RUN echo $VITE_SUPABASE_ANON_KEY >> .env.production
 RUN npm run build
 
 FROM node:18-alpine
+COPY --from=build /node_modules .
 COPY --from=build /build .
 COPY --from=build package.json package.json
 
