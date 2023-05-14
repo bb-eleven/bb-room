@@ -7,7 +7,7 @@ ARG VITE_SUPABASE_ANON_KEY
 
 COPY package*.json ./
 
-RUN npm ci --ignore-scripts --omit dev
+RUN npm ci --ignore-scripts
 
 COPY . .
 
