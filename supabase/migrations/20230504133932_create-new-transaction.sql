@@ -1,4 +1,4 @@
-CREATE FUNCTION _update_location_quantity(_item_id integer, _location_id integer, delta_quantity integer) RETURNS integer AS $$
+CREATE FUNCTION public._update_location_quantity(_item_id integer, _location_id integer, delta_quantity integer) RETURNS integer AS $$
 DECLARE
   _quantity integer;
 BEGIN
@@ -19,14 +19,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TYPE create_transaction_detail AS (
+CREATE TYPE public.create_transaction_detail AS (
   item_id integer,
   quantity integer,
   from_location_code citext,
   to_location_code citext
 );
 
-CREATE FUNCTION create_new_transaction(_author text, create_transaction_details create_transaction_detail[]) RETURNS integer AS $$
+CREATE FUNCTION public.create_new_transaction(_author text, create_transaction_details create_transaction_detail[]) RETURNS integer AS $$
 DECLARE
   _transaction_id integer;
   _from_location_id integer;
