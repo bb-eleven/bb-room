@@ -2,6 +2,8 @@
 import { createSupabaseLoadClient } from '@supabase/auth-helpers-sveltekit';
 import type { LayoutLoad } from './$types';
 import type { Database } from '$lib/database.types';
+import { UsernameStore } from '$lib/stores/username';
+import { ninou } from '$lib/utils';
 
 export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 	depends('supabase:auth');
@@ -16,6 +18,9 @@ export const load: LayoutLoad = async ({ fetch, data, depends }) => {
 	const {
 		data: { session },
 	} = await supabase.auth.getSession();
+
+	const username = session?.user.email;
+	UsernameStore.set(ninou(username) ? username : null);
 
 	return { supabase, session };
 };

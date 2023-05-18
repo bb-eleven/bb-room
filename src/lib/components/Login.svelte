@@ -7,8 +7,8 @@
 
 	export let supabase: SupabaseClient<Database>;
 	let username: string;
-	let loggedInUsername: string;
 	let password: string;
+	export let loggedInUsername: string | null = null;
 	export let error: AuthError | null = null;
 	let success = false;
 
