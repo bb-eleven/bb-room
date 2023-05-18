@@ -7,10 +7,25 @@
 	import { DbFunction } from '$lib/db/functions.js';
 	import type { Category, Location, CreateTransactionDetail } from '$lib/db/tables';
 	import type { ItemView } from '$lib/db/views.js';
-	import { supabase } from '$lib/supabase-client.js';
 	import { inou, ninou } from '$lib/utils.js';
+	import type { PageData } from './$types';
+	import { loadData } from './functions';
 
-	export let data;
+	export let data: PageData;
+	const supabase = data.supabase;
+	let itemViews: ItemView[] = [];
+	let categories: Category[] = [];
+	let locations: Location[] = [];
+
+	$: {
+		if (data.session) {
+			loadData(supabase).then((data) => ({ itemViews, categories, locations } = data));
+		} else {
+			itemViews = null as any;
+			categories = null as any;
+			locations = null as any;
+		}
+	}
 
 	let author: string;
 	let authorError: { message: string } | undefined;
@@ -29,8 +44,6 @@
 		selectedLocations.length === 0
 			? 'Locations'
 			: 'Locations: ' + selectedLocations.map(({ code }) => code).join(', ');
-
-	let itemViews: ItemView[] = data.itemViews;
 
 	const search = async () => {
 		const { data, error } = await supabase
@@ -94,7 +107,7 @@
 		createTransactionDetails.forEach(validateCreateTransactionDetail);
 
 		if (inou(authorError) && createTransactionDetailsErrors.filter(ninou).length === 0) {
-			await createTransaction(author, createTransactionDetails);
+			await createTransaction(supabase, author, createTransactionDetails);
 			location.reload();
 		}
 	};
@@ -104,49 +117,56 @@
   TODO
   - Collapsible filter
 -->
-<div id="filter" class="mx-auto w-1/2 space-y-2">
-	<SearchBar bind:search={itemName} />
-	<CheckboxDropdown
-		label={categoriesLabel}
-		options={data.categories}
-		getName={(item) => item.name}
-		bind:selected={selectedCategories}
-	/>
-	<CheckboxDropdown
-		label={locationsLabel}
-		options={data.locations}
-		getName={(item) => item.code}
-		bind:selected={selectedLocations}
-	/>
-	<div class="pt-2 flex justify-center">
-		<Button text="Search" click={search} />
+{#if inou(data.session)}
+	<div class="h-[100vh] flex flex-col justify-center items-center">
+		<p>You're not logged in!</p>
+		<a href="/" class="underline decoration-solid">Go to login</a>
 	</div>
-	<span class="block mt-4 text-center">{itemViews.length} results found</span>
-</div>
-
-<div class="mt-4 space-y-4">
-	<SearchBar bind:search={author} placeholder="Author" onBlur={validateAuthor} />
-	{#if !inou(authorError)}
-		<div class="rounded-lg p-2 bg-red text-cultured">
-			{authorError.message}
-		</div>
-	{/if}
-
-	<!-- TODO: find out why I need to bind selectedItem -->
-	{#each selectedItems as selectedItem, i}
-		<TransactionDetail
-			showRemoveButton={i > 0}
-			onRemove={() => removeItem(i)}
-			{itemViews}
-			bind:selectedItem
-			error={createTransactionDetailsErrors[i]}
-			locations={data.locations.map(({ code }) => ({ code }))}
-			bind:createTransactionDetail={createTransactionDetails[i]}
+{:else}
+	<div id="filter" class="mx-auto w-1/2 space-y-2">
+		<SearchBar bind:search={itemName} />
+		<CheckboxDropdown
+			label={categoriesLabel}
+			options={categories}
+			getName={(item) => item.name}
+			bind:selected={selectedCategories}
 		/>
-	{/each}
-	<Button text="Add item" click={addItem} />
-</div>
+		<CheckboxDropdown
+			label={locationsLabel}
+			options={locations}
+			getName={(item) => item.code}
+			bind:selected={selectedLocations}
+		/>
+		<div class="pt-2 flex justify-center">
+			<Button text="Search" click={search} />
+		</div>
+		<span class="block mt-4 text-center">{itemViews.length} results found</span>
+	</div>
 
-<div class="my-2 w-full flex justify-center">
-	<button class="rounded-xl px-5 py-2 bg-envy text-mirage" on:click={submit}> Submit </button>
-</div>
+	<div class="mt-4 space-y-4">
+		<SearchBar bind:search={author} placeholder="Author" onBlur={validateAuthor} />
+		{#if !inou(authorError)}
+			<div class="rounded-lg p-2 bg-red text-cultured">
+				{authorError.message}
+			</div>
+		{/if}
+
+		<!-- TODO: find out why I need to bind selectedItem -->
+		{#each selectedItems as selectedItem, i}
+			<TransactionDetail
+				showRemoveButton={i > 0}
+				onRemove={() => removeItem(i)}
+				{itemViews}
+				bind:selectedItem
+				error={createTransactionDetailsErrors[i]}
+				locations={locations.map(({ code }) => ({ code }))}
+				bind:createTransactionDetail={createTransactionDetails[i]}
+			/>
+		{/each}
+		<Button text="Add item" click={addItem} />
+	</div>
+
+	<div class="my-2 w-full flex justify-center">
+		<button class="rounded-xl px-5 py-2 bg-envy text-mirage" on:click={submit}> Submit </button>
+	</div>
+{/if}

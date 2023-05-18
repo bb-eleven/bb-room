@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let search: string;
+	export let type = 'text';
 	export let placeholder = 'Search';
 	export let onBlur = () => {};
 </script>
@@ -7,7 +8,7 @@
 <div class={$$props.class}>
 	<label>
 		<input
-			type="text"
+			{...{ type }}
 			{placeholder}
 			spellcheck="false"
 			bind:value={search}
