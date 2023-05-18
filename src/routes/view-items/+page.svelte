@@ -5,10 +5,16 @@
 	import { DbFunction } from '$lib/db/functions.js';
 	import type { Category, Location } from '$lib/db/tables.js';
 	import { DbView, type ItemView } from '$lib/db/views';
-	import { supabase } from '$lib/supabase-client';
 	import { inou } from '$lib/utils';
+	import type { PageData } from '../$types';
+	import { loadData } from '../create-transaction/functions';
 
-	export let data;
+	export let data: PageData;
+	const supabase = data.supabase;
+	let categories: Category[] = [];
+	let locations: Location[] = [];
+
+	loadData(supabase).then((data) => ({ categories, locations } = data));
 
 	let itemName: string;
 	let categoriesLabel = 'Categories';
@@ -37,7 +43,7 @@
 			.rpc(DbFunction.FilterItemView, {
 				_name_query: `%${itemName ?? ''}%`,
 				_category_names: selectedCategories.map(({ name }) => name),
-				_location_codes: selectedLocations.map(({ code }) => code)
+				_location_codes: selectedLocations.map(({ code }) => code),
 			})
 			.select();
 		itemViews = data as ItemView[];
@@ -52,13 +58,13 @@
 	<SearchBar bind:search={itemName} />
 	<CheckboxDropdown
 		label={categoriesLabel}
-		options={data.categories}
+		options={categories}
 		getName={(item) => item.name}
 		bind:selected={selectedCategories}
 	/>
 	<CheckboxDropdown
 		label={locationsLabel}
-		options={data.locations}
+		options={locations}
 		getName={(item) => item.code}
 		bind:selected={selectedLocations}
 	/>

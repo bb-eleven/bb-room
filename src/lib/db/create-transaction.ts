@@ -1,9 +1,11 @@
-import { supabase } from '$lib/supabase-client';
+import type { Database } from '$lib/database.types';
 import { inou } from '$lib/utils';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { DbFunction, type CreateNewTransactionParams } from './functions';
 import type { CreateTransactionDetail } from './tables';
 
 export const createTransaction = async (
+	supabase: SupabaseClient<Database>,
 	author: string,
 	createTransactionDetails: CreateTransactionDetail[],
 ) => {
@@ -25,7 +27,7 @@ export const createTransaction = async (
 			_author: author,
 			create_transaction_details: createTransactionDetails,
 		};
-		const { data, error } = await supabase.rpc(DbFunction.CreateNewTransaction, params);
+		const { data, error } = await supabase.rpc(DbFunction.CreateNewTransaction, params as any);
 		console.log(data, error);
 	} else {
 		console.log(errorRecords);

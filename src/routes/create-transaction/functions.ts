@@ -1,8 +1,9 @@
-import { DbTables, type Category, type Location } from '$lib/db/tables';
-import { DbView, type ItemView } from '$lib/db/views';
-import { supabase } from '$lib/supabase-client';
+import type { Database } from '$lib/database.types';
+import { type Category, DbTables, type Location } from '$lib/db/tables';
+import { type ItemView, DbView } from '$lib/db/views';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
-export async function load() {
+export async function loadData(supabase: SupabaseClient<Database>) {
 	let itemViews: ItemView[];
 	let categories: Category[];
 	let locations: Location[];
