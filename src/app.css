@@ -20,4 +20,12 @@
 		font-weight: normal;
 		text-rendering: optimizeLegibility;
 	}
+
+	@font-face {
+		font-family: 'Poppins';
+		src: url('/fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+		font-style: normal;
+		font-weight: normal;
+		text-rendering: optimizeLegibility;
+	}
 }
