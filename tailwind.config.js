@@ -101,6 +101,19 @@ module.exports = {
 					900: '#1A0303',
 				},
 			},
+			animation: {
+				'rotate-180': 'rotate-180 0.5s 0s forwards',
+				'rotate-360': 'rotate-360 0.5s 0s forwards',
+			},
+			keyframes: {
+				'rotate-180': {
+					'100%': { transform: 'rotate(180deg)' },
+				},
+				'rotate-360': {
+					'0%': { transform: 'rotate(180deg)' },
+					'100%': { transform: 'rotate(360deg)' },
+				},
+			},
 			fontFamily: {
 				logo: 'MeshedDisplay-SemiBold',
 				text: 'BLMelody-Regular',
