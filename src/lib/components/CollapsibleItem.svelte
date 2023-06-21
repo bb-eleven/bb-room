@@ -1,33 +1,31 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	import ExpandButton from './buttons/ExpandButton.svelte';
-	import { IconSvg } from './icon/icon-svg';
+	import CollapseButton from './buttons/CollapseButton.svelte';
 	import type { Database } from '$lib/database.types';
 
-	let expanded = true; // Expanded by default
+	let collapsed = true; // Collapsed by default
 	export let itemView: Database['public']['Views']['item_view']['Row'];
 </script>
 
 <div class="bg-off-200 rounded-2xl">
 	<!-- Header -->
 	<div
-		class="px-4 py-3 bg-off-400 text-off-800 {expanded
-			? 'rounded-t-2xl'
-			: 'rounded-2xl'} flex justify-between"
+		class="px-4 py-3 bg-off-400 text-off-800 {collapsed
+			? 'rounded-2xl'
+			: 'rounded-t-2xl'} flex justify-between"
 	>
 		<span>{itemView.name}</span>
 		<div class="relative">
-			<ExpandButton
-				icon={IconSvg.ChevronUp}
-				click={() => (expanded = !expanded)}
+			<CollapseButton
+				click={() => (collapsed = !collapsed)}
 				class="w-10 absolute right-0 translate-y-1/4 bg-brown-300 fill-brown-100"
 			/>
 		</div>
 	</div>
 
 	<!-- Body -->
-	{#if expanded}
+	{#if !collapsed}
 		<div
 			transition:slide={{ duration: 500, easing: cubicOut }}
 			class="px-4 py-4 flex flex-col gap-4"

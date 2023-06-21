@@ -2,10 +2,11 @@
 	import Icon from '../icon/Icon.svelte';
 	import { IconSvg } from '../icon/icon-svg';
 
+	// Collapsed by default
 	export let icon: IconSvg.ChevronUp | IconSvg.ChevronDown = IconSvg.ChevronDown;
 	export let click = () => {};
 
-	let rotate = 'none'; // ensures icon isn't animated when first loaded
+	let rotate = 'none'; // Ensures icon isn't animated when first loaded
 </script>
 
 <button
