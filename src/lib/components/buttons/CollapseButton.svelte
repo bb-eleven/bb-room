@@ -14,7 +14,7 @@
 		rotate = rotate === '180' ? '360' : '180';
 		click();
 	}}
-	class="{$$props.class} rounded-full"
+	class="w-10 p-1 rounded-full bg-brown-300 fill-brown-100 {$$props.class}"
 >
 	<!-- For Tailwind compiler to pick up animate-rotate-[180|360] -->
 	<!-- class="animate-rotate-180 animate-rotate-360" -->

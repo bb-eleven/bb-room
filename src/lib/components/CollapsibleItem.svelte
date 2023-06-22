@@ -19,7 +19,7 @@
 		<div class="relative">
 			<CollapseButton
 				click={() => (collapsed = !collapsed)}
-				class="w-10 absolute right-0 translate-y-1/4 bg-brown-300 fill-brown-100"
+				class="absolute right-0 translate-y-1/4"
 			/>
 		</div>
 	</div>
