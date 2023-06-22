@@ -3,9 +3,13 @@
 	import { cubicOut } from 'svelte/easing';
 	import CollapseButton from './buttons/CollapseButton.svelte';
 	import type { Database } from '$lib/database.types';
+	import SelectionButton from './buttons/SelectionButton.svelte';
+	import type { SelectionButtonType } from './buttons/selection-button-type';
+	import type { Nullable } from 'vitest';
 
 	let collapsed = true; // Collapsed by default
 	export let itemView: Database['public']['Views']['item_view']['Row'];
+	export let selectionButtonType: Nullable<SelectionButtonType> = null;
 </script>
 
 <div class="bg-off-200 rounded-2xl">
@@ -17,10 +21,11 @@
 	>
 		<span>{itemView.name}</span>
 		<div class="relative">
-			<CollapseButton
-				click={() => (collapsed = !collapsed)}
-				class="absolute right-0 translate-y-1/4"
-			/>
+			<!-- Button container -->
+			<div class="absolute right-0 translate-y-1/4 flex flex-row gap-2">
+				<CollapseButton click={() => (collapsed = !collapsed)} />
+				<SelectionButton type={selectionButtonType} />
+			</div>
 		</div>
 	</div>
 
