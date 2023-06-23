@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Icon from '../icon/Icon.svelte';
-	import RotatingIcon from '../icon/RotatingIcon.svelte';
-	import { IconSvg } from '../icon/icon-svg';
-	import { defaultRotatingIconData, rotateIcon } from '../icon/rotating-icon';
+	import Icon from '../icons/Icon.svelte';
+	import RotatingIcon from '../icons/RotatingIcon.svelte';
+	import { IconSvg } from '../icons/icon-svg';
+	import { defaultRotatingIconData, rotateIcon } from '../icons/rotating-icon';
 
 	// Collapsed by default
 	export let icon: IconSvg.ChevronUp | IconSvg.ChevronDown = IconSvg.ChevronDown;

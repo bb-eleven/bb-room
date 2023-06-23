@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { ninou } from '$lib/utils';
 	import type { Nullable } from 'vitest';
-	import Icon from '../icon/Icon.svelte';
-	import { IconSvg } from '../icon/icon-svg';
+	import Icon from '../icons/Icon.svelte';
+	import { IconSvg } from '../icons/icon-svg';
 	import { SelectionButtonType } from './selection-button-type';
 
 	export let clicked = false;

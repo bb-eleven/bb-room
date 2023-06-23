@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Icon from '../icon/Icon.svelte';
-	import type { IconSvg } from '../icon/icon-svg';
+	import Icon from '../icons/Icon.svelte';
+	import type { IconSvg } from '../icons/icon-svg';
 	import type { RotatingIconData } from './rotating-icon';
 
 	export let icon: IconSvg;
