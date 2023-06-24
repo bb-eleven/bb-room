@@ -16,8 +16,8 @@
 		rotatingIconData = rotateIcon(rotatingIconData);
 		click();
 	}}
-	class="py-2 px-3 rounded-full bg-blue-600 fill-blue-200 flex items-center gap-1 {$$props.class}"
+	class="h-10 py-1 px-2 rounded-full bg-blue-600 fill-blue-200 flex items-center {$$props.class}"
 >
-	<Icon icon={IconSvg.Search} class="w-7" />
-	<RotatingIcon {icon} {rotatingIconData} class="w-6" />
+	<Icon icon={IconSvg.Search} class="h-5/6" />
+	<RotatingIcon {icon} {rotatingIconData} class="ml-1 h-2/3" />
 </button>
