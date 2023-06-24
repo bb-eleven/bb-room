@@ -39,7 +39,7 @@
 			on:keyup={toggleOptions}
 			class="flex justify-between items-center"
 		>
-			<span>{getInputText(selected)}</span>
+			<span class="text-ellipsis whitespace-nowrap overflow-hidden">{getInputText(selected)}</span>
 			<RotatingIcon icon={IconSvg.ChevronDown} {rotatingIconData} class="h-8" />
 		</div>
 	</div>

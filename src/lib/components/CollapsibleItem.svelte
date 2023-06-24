@@ -19,8 +19,8 @@
 			? 'rounded-2xl'
 			: 'rounded-t-2xl'} flex justify-between"
 	>
-		<span>{itemView.name}</span>
-		<div class="relative">
+		<span class="text-ellipsis whitespace-nowrap overflow-hidden">{itemView.name}</span>
+		<div class="relative min-w-[6rem]">
 			<!-- Button container -->
 			<div class="absolute right-0 translate-y-1 flex flex-row gap-2">
 				<CollapseButton click={() => (collapsed = !collapsed)} />
