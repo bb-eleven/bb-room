@@ -2,6 +2,7 @@
 	import CollapsibleItem from '$lib/components/CollapsibleItem.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import SearchButton from '$lib/components/buttons/SearchButton.svelte';
+	import TextButton from '$lib/components/buttons/TextButton.svelte';
 	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type';
 	import Input from '$lib/components/inputs/Input.svelte';
 	import MultiSelect from '$lib/components/inputs/selects/MultiSelect.svelte';
@@ -30,6 +31,7 @@
 	const getLocationInputDisplay = (selected?: ItemViewRow) => selected?.name ?? 'Select';
 	const getLocationInputDisplayM = (selected: ItemViewRow[]) =>
 		selected.length === 0 ? 'Select' : selected.map(({ name }) => name).join(', ');
+	const search = () => {};
 </script>
 
 <!-- TODO: remove negative margin, 100vh(?) -->
@@ -42,9 +44,10 @@
 		{#if showSearchInputs}
 			<div
 				transition:slide={{ duration: 500, easing: cubicOut }}
-				class="absolute z-50 top-16 rounded-2xl w-full p-3 space-y-4 bg-off-100 drop-shadow-2xl shadow-lg"
+				class="absolute z-50 flex flex-col top-16 rounded-2xl w-full p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-lg"
 			>
 				<Input label="Name" />
+
 				<SingleSelect
 					label="Locations"
 					selected={null}
@@ -60,6 +63,10 @@
 					getOptionText={getLocationOptionDisplay}
 					options={itemViews}
 				/>
+
+				<div class="flex justify-end mt-4">
+					<TextButton text="Search" click={search} />
+				</div>
 			</div>
 		{/if}
 	</div>
