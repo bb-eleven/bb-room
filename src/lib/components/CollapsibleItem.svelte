@@ -12,7 +12,7 @@
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
 </script>
 
-<div class="bg-off-200 rounded-2xl">
+<div class="bg-off-200 rounded-2xl {$$props.class}">
 	<!-- Header -->
 	<div
 		class="px-4 py-3 bg-off-400 text-off-800 {collapsed
@@ -22,7 +22,7 @@
 		<span>{itemView.name}</span>
 		<div class="relative">
 			<!-- Button container -->
-			<div class="absolute right-0 translate-y-1/4 flex flex-row gap-2">
+			<div class="absolute right-0 translate-y-1 flex flex-row gap-2">
 				<CollapseButton click={() => (collapsed = !collapsed)} />
 				<SelectionButton type={selectionButtonType} />
 			</div>
