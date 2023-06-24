@@ -11,6 +11,7 @@
 	export let getOptionText: (selected: any) => string;
 	export let getInputText: (selected?: any) => {};
 	export let selected: any;
+	let selectedIndex: number;
 	let optionDisplay = getOptionText(selected);
 
 	let rotatingIconData = defaultRotatingIconData();
@@ -21,8 +22,9 @@
 	const toggleOptions = () => {
 		rotatingIconData = rotateIcon(rotatingIconData);
 	};
-	const selectOption = (item: any) => {
+	const selectOption = (item: any, i: number) => {
 		selected = item;
+		selectedIndex = i;
 		toggleOptions();
 	};
 </script>
@@ -51,11 +53,13 @@
 			transition:slide={{ duration: 500, easing: cubicOut }}
 			use:clickOutside={toggleOptions}
 		>
-			{#each options as item}
+			{#each options as item, i}
 				<div
-					on:click={() => selectOption(item)}
-					on:keyup={() => selectOption(item)}
-					class="px-4 py-3 bg-blue-300 text-blue-600 hover:bg-blue-400 hover:text-blue-700 hover:cursor-pointer"
+					on:click={() => selectOption(item, i)}
+					on:keyup={() => selectOption(item, i)}
+					class="px-4 py-3 {selectedIndex === i
+						? 'bg-blue-500 text-blue-200'
+						: 'bg-blue-300 text-blue-600 hover:bg-blue-400 hover:text-blue-700'} hover:cursor-pointer"
 				>
 					{getOptionText(item)}
 				</div>
