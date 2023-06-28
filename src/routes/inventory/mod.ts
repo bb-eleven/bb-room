@@ -2,7 +2,6 @@ import type { Category, ItemView, Location } from '$lib/database.types.short';
 import type { Database } from '$lib/database.types';
 import { ninou } from '$lib/utils';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Nullable } from 'vitest';
 
 // Locations MultiSelect
 export const getLocationsOptionDisplay = (selected?: Location['Row']) => selected?.code ?? '';
