@@ -1,36 +1,26 @@
 <script lang="ts">
-	import CollapsibleItem from '$lib/components/CollapsibleItem.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import SearchButton from '$lib/components/buttons/SearchButton.svelte';
 	import TextButton from '$lib/components/buttons/TextButton.svelte';
-	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type';
 	import Input from '$lib/components/inputs/Input.svelte';
 	import MultiSelect from '$lib/components/inputs/selects/MultiSelect.svelte';
-	import SingleSelect from '$lib/components/inputs/selects/SingleSelect.svelte';
-	import type { Database } from '$lib/database.types';
 	import { cubicOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
+	import type { Category, ItemView, Location } from '$lib/database.types.short.js';
+	import * as Mod from './mod.js';
+	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type.js';
+	import CollapsibleItem from '$lib/components/CollapsibleItem.svelte';
+	import { ninou } from '$lib/utils.js';
 
-	type ItemViewRow = Database['public']['Views']['item_view']['Row'];
-	const itemViews: ItemViewRow[] = new Array(300)
-		.fill({
-			id: 1,
-			category_ids: [1, 2, 3],
-			category_names: ['1', '2', '3'],
-			location_codes: ['L1', 'tbc'],
-			location_quantities: [30, 0],
-			name: 'hello hello hello hello hello hello hello hello hello hello hello hello hello hello hello',
-			variant_name: null,
-		})
-		.map((itemView, i) => ({ ...itemView, name: [itemView.name, i].join(' ') }));
-	let multiSelectedLocations: any[] = [];
+	export let data;
+
+	let itemViews: ItemView['Row'][];
+	let selectedCategories: Category['Row'][];
+	let selectedLocations: Location['Row'][];
 	let showSearchInputs = false;
 
-	// TODO: update Supabase types
-	const getLocationOptionDisplay = (selected: ItemViewRow) => selected?.name ?? '';
-	const getLocationInputDisplay = (selected?: ItemViewRow) => selected?.name ?? 'Select';
-	const getLocationInputDisplayM = (selected: ItemViewRow[]) =>
-		selected.length === 0 ? 'Select' : selected.map(({ name }) => name).join(', ');
+	Mod.getItemViews(data.supabase).then((data) => (itemViews = data ?? []));
+
 	const search = () => {};
 </script>
 
@@ -48,20 +38,20 @@
 			>
 				<Input label="Name" />
 
-				<SingleSelect
-					label="Locations"
-					selected={null}
-					getInputText={getLocationInputDisplay}
-					getOptionText={getLocationOptionDisplay}
-					options={itemViews}
+				<MultiSelect
+					label="Categories"
+					bind:selected={selectedCategories}
+					getInputText={Mod.getCategoriesInputDisplay}
+					getOptionText={Mod.getCategoriesOptionDisplay}
+					options={data.categories}
 				/>
 
 				<MultiSelect
 					label="Locations"
-					bind:selected={multiSelectedLocations}
-					getInputText={getLocationInputDisplayM}
-					getOptionText={getLocationOptionDisplay}
-					options={itemViews}
+					bind:selected={selectedLocations}
+					getInputText={Mod.getLocationsInputDisplay}
+					getOptionText={Mod.getLocationsOptionDisplay}
+					options={data.locations}
 				/>
 
 				<div class="flex justify-end mt-4">
@@ -72,9 +62,11 @@
 	</div>
 
 	<!-- Items -->
-	<div class="mt-6 h-[80vh] overflow-y-scroll">
-		{#each itemViews as itemView}
-			<CollapsibleItem {itemView} selectionButtonType={SelectionButtonType.Check} class="mb-4" />
-		{/each}
-	</div>
+	{#if ninou(itemViews)}
+		<div class="mt-6 h-[80vh] overflow-y-scroll">
+			{#each itemViews as itemView}
+				<CollapsibleItem {itemView} selectionButtonType={SelectionButtonType.Check} class="mb-4" />
+			{/each}
+		</div>
+	{/if}
 </div>

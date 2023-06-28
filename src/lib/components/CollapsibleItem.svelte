@@ -2,24 +2,28 @@
 	import { slide } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import CollapseButton from './buttons/CollapseButton.svelte';
-	import type { Database } from '$lib/database.types';
 	import SelectionButton from './buttons/SelectionButton.svelte';
 	import type { SelectionButtonType } from './buttons/selection-button-type';
 	import type { Nullable } from 'vitest';
+	import type { ItemView } from '$lib/database.types.short';
+	import { ninou } from '$lib/utils';
 
 	let collapsed = true; // Collapsed by default
-	export let itemView: Database['public']['Views']['item_view']['Row'];
+	export let itemView: ItemView['Row'];
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
 </script>
 
 <div class="bg-off-200 rounded-2xl {$$props.class}">
 	<!-- Header -->
 	<div
-		class="px-4 py-3 bg-off-400 text-off-800 {collapsed
-			? 'rounded-2xl'
-			: 'rounded-t-2xl'} flex justify-between"
+		class="px-4 py-3 bg-off-400x {collapsed ? 'rounded-2xl' : 'rounded-t-2xl'} flex justify-between"
 	>
-		<span class="text-ellipsis whitespace-nowrap overflow-hidden">{itemView.name}</span>
+		<div class="text-ellipsis whitespace-nowrap overflow-hidden">
+			<span class="text-off-800">{itemView.name}</span>
+			{#if ninou(itemView.variant_name)}
+				<span class="text-brown-600 ml-2">[{itemView.variant_name}]</span>
+			{/if}
+		</div>
 		<div class="relative min-w-[6rem]">
 			<!-- Button container -->
 			<div class="absolute right-0 translate-y-1 flex flex-row gap-2">
