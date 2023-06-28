@@ -11,13 +11,15 @@
 	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type.js';
 	import CollapsibleItem from '$lib/components/CollapsibleItem.svelte';
 	import { ninou } from '$lib/utils.js';
+	import { clickOutside } from '$lib/click-outside.js';
+	import { defaultRotatingIconData } from '$lib/components/icons/rotating-icon.js';
 
 	export let data;
 
 	let itemViews: ItemView['Row'][];
 	let selectedCategories: Category['Row'][];
 	let selectedLocations: Location['Row'][];
-	let showSearchInputs = false;
+	let searchButtonRotatingIconData = defaultRotatingIconData();
 
 	Mod.getItemViews(data.supabase).then((data) => (itemViews = data ?? []));
 
@@ -28,12 +30,13 @@
 <div class="relative h-[100vh] bg-off-100 p-3 mt-[-0.5rem]">
 	<div class="relative flex items-end gap-2">
 		<Title title="Inventory" />
-		<SearchButton click={() => (showSearchInputs = !showSearchInputs)} />
+		<SearchButton bind:rotatingIconData={searchButtonRotatingIconData} />
 
 		<!-- Search inputs -->
-		{#if showSearchInputs}
+		{#if searchButtonRotatingIconData.rotated}
 			<div
 				transition:slide={{ duration: 500, easing: cubicOut }}
+				use:clickOutside={() => (searchButtonRotatingIconData.rotated = false)}
 				class="absolute z-50 flex flex-col top-16 rounded-2xl w-full p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-lg"
 			>
 				<Input label="Name" />
