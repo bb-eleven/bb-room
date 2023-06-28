@@ -13,13 +13,11 @@
 	export let selected: any[] = [];
 	export let selectedIndexes = new Set<number>();
 
-	$: options = options.map((option) => ({ ...option, selected: false }));
-	$: selected = options.filter((_option, i) => selectedIndexes.has(i));
-
 	let optionDisplay = getOptionText(selected);
-
 	let rotatingIconData = defaultRotatingIconData();
 	let showOptions: boolean;
+
+	$: selected = options.filter((_option, i) => selectedIndexes.has(i));
 	$: showOptions = rotatingIconData.rotated;
 	$: optionDisplay = getOptionText(selected);
 
