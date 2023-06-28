@@ -15,7 +15,12 @@ export const getCategoriesInputDisplay = (selected?: Category['Row'][]) =>
 	ninou(selected) && selected.length > 0 ? selected.map((c) => c.name).join(', ') : 'Select';
 
 export const getItemViews = async (supabase: SupabaseClient<Database>) => {
-	const { data: itemViews, error } = await supabase.from('item_view').select();
+	const { data: itemViews, error } = await supabase
+		.from('item_view')
+		.select()
+		.order('category_names')
+		.order('name')
+		.order('variant_name');
 	return itemViews;
 };
 
@@ -31,6 +36,9 @@ export const filterItemViews = async (
 			_category_names: categories.map(({ name }) => name),
 			_location_codes: locations.map(({ code }) => code),
 		})
-		.select();
+		.select()
+		.order('category_names')
+		.order('name')
+		.order('variant_name');
 	return itemViews ?? [];
 };
