@@ -16,7 +16,7 @@
 
 	export let data;
 
-	let itemViews: ItemView['Row'][];
+	let itemViews: ItemView['Row'][] = [];
 	let searchName = '';
 	let selectedCategories: Category['Row'][];
 	let selectedLocations: Location['Row'][];
@@ -72,10 +72,13 @@
 			</div>
 		{/if}
 	</div>
+	<div class="bg-brown-100 px-2 py-1 mt-4 w-fit rounded-lg justify-self-end">
+		<span class="text-sm text-brown-500">showing {itemViews.length} results</span>
+	</div>
 
 	<!-- Items -->
 	{#if ninou(itemViews)}
-		<div class="mt-6 h-[80vh] overflow-y-scroll">
+		<div class="mt-4 h-[80vh] overflow-y-scroll">
 			{#each itemViews as itemView}
 				<CollapsibleItem {itemView} selectionButtonType={SelectionButtonType.Check} class="mb-4" />
 			{/each}
