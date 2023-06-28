@@ -1,7 +1,8 @@
-import type { Category, Location } from '$lib/database.types.short';
+import type { Category, ItemView, Location } from '$lib/database.types.short';
 import type { Database } from '$lib/database.types';
 import { ninou } from '$lib/utils';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Nullable } from 'vitest';
 
 // Locations MultiSelect
 export const getLocationsOptionDisplay = (selected?: Location['Row']) => selected?.code ?? '';
@@ -16,4 +17,20 @@ export const getCategoriesInputDisplay = (selected?: Category['Row'][]) =>
 export const getItemViews = async (supabase: SupabaseClient<Database>) => {
 	const { data: itemViews, error } = await supabase.from('item_view').select();
 	return itemViews;
+};
+
+export const filterItemViews = async (
+	supabase: SupabaseClient<Database>,
+	name: string,
+	categories: Category['Row'][],
+	locations: Location['Row'][],
+): Promise<ItemView['Row'][]> => {
+	const { data: itemViews, error } = await supabase
+		.rpc('filter_item_view', {
+			_name_query: `%${name}%`,
+			_category_names: categories.map(({ name }) => name),
+			_location_codes: locations.map(({ code }) => code),
+		})
+		.select();
+	return itemViews ?? [];
 };

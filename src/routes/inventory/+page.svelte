@@ -17,13 +17,22 @@
 	export let data;
 
 	let itemViews: ItemView['Row'][];
+	let searchName = '';
 	let selectedCategories: Category['Row'][];
 	let selectedLocations: Location['Row'][];
 	let searchButtonRotatingIconData = defaultRotatingIconData();
 
 	Mod.getItemViews(data.supabase).then((data) => (itemViews = data ?? []));
 
-	const search = () => {};
+	const search = async () => {
+		itemViews = await Mod.filterItemViews(
+			data.supabase,
+			searchName,
+			selectedCategories,
+			selectedLocations,
+		);
+		searchButtonRotatingIconData.rotated = false;
+	};
 </script>
 
 <!-- TODO: remove negative margin, 100vh(?) -->
@@ -39,7 +48,7 @@
 				use:clickOutside={() => (searchButtonRotatingIconData.rotated = false)}
 				class="absolute z-50 flex flex-col top-16 rounded-2xl w-full p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-lg"
 			>
-				<Input label="Name" />
+				<Input label="Name" bind:value={searchName} />
 
 				<MultiSelect
 					label="Categories"
