@@ -107,6 +107,7 @@ module.exports = {
 			animation: {
 				'rotate-180': 'rotate-180 0.5s 0s forwards',
 				'rotate-360': 'rotate-360 0.5s 0s forwards',
+				'slide-up': 'slide-up 0.7s 0s forwards',
 			},
 			keyframes: {
 				'rotate-180': {
@@ -115,6 +116,11 @@ module.exports = {
 				'rotate-360': {
 					'0%': { transform: 'rotate(180deg)' },
 					'100%': { transform: 'rotate(360deg)' },
+				},
+				// For selected item views collapse button
+				'slide-up': {
+					'0%': { transform: 'translateY(100%)' },
+					'100%': { transform: 'translateY(0)' },
 				},
 			},
 			fontFamily: {

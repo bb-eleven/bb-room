@@ -11,6 +11,8 @@
 	let collapsed = true; // Collapsed by default
 	export let itemView: ItemView['Row'];
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
+	export let selected = false;
+	export let select: (selected: boolean) => void = (selected) => {};
 </script>
 
 <div class="bg-off-200 rounded-2xl {$$props.class}">
@@ -28,7 +30,13 @@
 			<!-- Button container -->
 			<div class="absolute right-0 translate-y-1 flex flex-row gap-2">
 				<CollapseButton click={() => (collapsed = !collapsed)} />
-				<SelectionButton type={selectionButtonType} />
+				<SelectionButton
+					type={selectionButtonType}
+					bind:clicked={selected}
+					click={() => {
+						select(selected);
+					}}
+				/>
 			</div>
 		</div>
 	</div>
