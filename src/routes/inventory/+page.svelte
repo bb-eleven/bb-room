@@ -20,6 +20,7 @@
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
 	let itemViewSelecteds: boolean[];
+	let selectedItemViewSelected: boolean = false;
 
 	// TODO: use map to keep track of
 	let selectedItemViewIdOriginalIndexMap = new Map<number, number>();
@@ -86,6 +87,7 @@
 
 		itemViewSelecteds = itemViewSelecteds;
 		selectedItemViewIdOriginalIndexMap = selectedItemViewIdOriginalIndexMap;
+		selectedItemViewSelected = false;
 	};
 </script>
 
@@ -180,6 +182,7 @@
 							<CollapsibleItem
 								itemView={selectedItemView}
 								selectionButtonType={SelectionButtonType.X}
+								bind:selected={selectedItemViewSelected}
 								select={() => deselectItemView(selectedItemView.id)}
 								class="mb-4"
 							/>
