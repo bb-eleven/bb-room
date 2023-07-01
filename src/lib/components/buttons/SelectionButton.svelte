@@ -24,15 +24,14 @@
 		<Icon icon={IconSvg.Check} class="" />
 	</button>
 {:else if type === SelectionButtonType.X}
-	<!-- {clicked
-		 	? 'bg-off-600 fill-red-200'
-		 	: 'bg-off-500 fill-off-100 hover:fill-red-100'} -->
 	<button
 		on:click={() => {
 			clicked = !clicked;
 			click();
 		}}
-		class="w-10 p-2 rounded-full bg-off-500 fill-off-100 {$$props.class}"
+		class="w-10 p-2 rounded-full {clicked
+			? 'bg-off-600 fill-red-200'
+			: 'bg-off-500 fill-off-100 hover:fill-red-100'} {$$props.class}"
 	>
 		<Icon icon={IconSvg.X} class="" />
 	</button>
