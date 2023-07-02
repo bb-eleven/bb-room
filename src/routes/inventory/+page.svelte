@@ -16,6 +16,8 @@
 	import CollapseButton from '$lib/components/buttons/CollapseButton.svelte';
 	import { IconSvg } from '$lib/components/icons/icon-svg.js';
 	import type { Nullable } from 'vitest';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
@@ -88,6 +90,15 @@
 		itemViewSelecteds = itemViewSelecteds;
 		selectedItemViewIdOriginalIndexMap = selectedItemViewIdOriginalIndexMap;
 		selectedItemViewSelected = false;
+	};
+
+	const openCreateTransactionPage = () => {
+		browser &&
+			localStorage.setItem(
+				'selectedItemViews',
+				JSON.stringify([...selectedItemViewIdOriginalIndexMap.values()].map((oi) => itemViews[oi])),
+			);
+		goto('/create-transacrion');
 	};
 </script>
 
@@ -168,7 +179,7 @@
 					{selectedItemViewIdOriginalIndexMap.size === 1 ? 'item' : 'items'} selected
 				</div>
 
-				<TextButton text="Next" />
+				<TextButton text="Next" click={() => openCreateTransactionPage()} />
 			</div>
 
 			{#if !collapseSelectedItemViewsTab}
