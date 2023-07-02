@@ -9,7 +9,7 @@
 	import type { Category, ItemView, Location } from '$lib/database.types.short.js';
 	import * as Mod from './mod.js';
 	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type.js';
-	import CollapsibleItem from '$lib/components/CollapsibleItem.svelte';
+	import CollapsibleItemView from './CollapsibleItemView.svelte';
 	import { inou, ninou } from '$lib/utils.js';
 	import { clickOutside } from '$lib/click-outside.js';
 	import { defaultRotatingIconData } from '$lib/components/icons/rotating-icon.js';
@@ -147,7 +147,7 @@
 	{#if ninou(itemViews)}
 		<div class="mt-4 h-[80vh] overflow-y-scroll">
 			{#each itemViews as itemView, i}
-				<CollapsibleItem
+				<CollapsibleItemView
 					bind:itemView={itemViews[i]}
 					selectionButtonType={SelectionButtonType.Check}
 					bind:selected={itemViewSelecteds[i]}
@@ -190,7 +190,7 @@
 				>
 					{#each [...selectedItemViewIdOriginalIndexMap.values()].map((oi) => itemViews[oi]) as selectedItemView}
 						<div in:slide={{ duration: 300 }} out:slide={{ duration: 100 }}>
-							<CollapsibleItem
+							<CollapsibleItemView
 								itemView={selectedItemView}
 								selectionButtonType={SelectionButtonType.X}
 								bind:selected={selectedItemViewSelected}
