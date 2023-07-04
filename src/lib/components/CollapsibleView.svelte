@@ -6,8 +6,8 @@
 
 	let collapsed = true; // Collapsed by default
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
-	export let selected: boolean;
-	export let select: (selected: boolean) => void;
+	export let selected: boolean = false;
+	export let select: (selected: boolean) => void = () => {};
 </script>
 
 <div class="bg-off-200 rounded-2xl {$$props.class}">
