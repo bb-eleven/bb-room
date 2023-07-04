@@ -13,7 +13,9 @@
 <div class="bg-off-200 rounded-2xl {$$props.class}">
 	<!-- Header -->
 	<div
-		class="px-4 py-3 bg-off-300 {collapsed ? 'rounded-2xl' : 'rounded-t-2xl'} flex justify-between"
+		class="px-4 py-3 bg-off-300 {$$slots.body || !collapsed
+			? 'rounded-t-2xl'
+			: 'rounded-2xl'} flex justify-between"
 	>
 		<div class="text-ellipsis whitespace-nowrap overflow-hidden">
 			<slot name="title" />
