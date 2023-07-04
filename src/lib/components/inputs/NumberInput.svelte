@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { ninou } from '$lib/utils';
+	import type { Nullable } from 'vitest';
 	import IconButton from '../buttons/IconButton.svelte';
 	import { IconSvg } from '../icons/icon-svg';
+	import InputError from './InputError.svelte';
 
 	export let label: string;
 	export let value: number;
@@ -20,6 +22,7 @@
 	}
 
 	export let onBlur = () => {};
+	export let error: Nullable<string> = null;
 </script>
 
 <div class={$$props.class}>
@@ -46,6 +49,7 @@
 			click={() => ++value}
 		/>
 	</div>
+	<InputError {error} />
 </div>
 
 <style>

@@ -5,6 +5,8 @@
 	import { IconSvg } from '../../icons/icon-svg';
 	import { defaultRotatingIconData, rotateIcon } from '../../icons/rotating-icon';
 	import { cubicOut } from 'svelte/easing';
+	import type { Nullable } from 'vitest';
+	import InputError from '../InputError.svelte';
 
 	export let label: string;
 	export let options: any[];
@@ -12,6 +14,7 @@
 	export let getInputText: (selected?: any) => {};
 	export let selected: any;
 	export let select: (selected: any) => void = () => {};
+	export let error: Nullable<string> = null;
 	let selectedIndex: number;
 
 	let optionDisplay = getOptionText(selected);
@@ -70,4 +73,5 @@
 			{/each}
 		</div>
 	{/if}
+	<InputError {error} />
 </div>
