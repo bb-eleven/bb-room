@@ -1,6 +1,7 @@
 import type { ItemView, Location } from '$lib/database.types.short';
 import type { Errors, Result } from '$lib/types';
 import { inou, inout, iu } from '$lib/utils';
+import type { Nullable } from 'vitest';
 import type { Database } from '../../database.types';
 type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer T)[]
 	? T
@@ -12,9 +13,11 @@ export type CreateTransactionDetail = ArrayElement<
 >;
 type IV = Omit<ItemView['Row'], 'id' | 'category_ids' | 'location_codes'>;
 export type ItemViewCreateTransactionDetail = IV &
-	CreateTransactionDetail & { from_location_codes: string[] };
+	CreateTransactionDetail & { from_location_codes: Nullable<string>[] };
 
-export const getLocationCodesInputDisplay = (selected: string) => inout(selected, 'Select');
+export const getLocationCodesInputDisplay = (selected: Nullable<string>) =>
+	inout(selected, 'Select');
+export const getLocationCodesOptionDisplay = (option: Nullable<string>) => inout(option, 'Outside');
 
 export const mapToItemViewCreateTransactionDetail = (
 	itemView: ItemView['Row'],
@@ -26,7 +29,7 @@ export const mapToItemViewCreateTransactionDetail = (
 		quantity: 0,
 		from_location_code: undefined as any,
 		to_location_code: undefined as any,
-		from_location_codes: inout(location_codes, []),
+		from_location_codes: [null, ...inout(location_codes, [])],
 	};
 };
 

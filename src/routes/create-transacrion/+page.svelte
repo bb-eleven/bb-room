@@ -52,7 +52,7 @@
 								(fromLocationCode) => fromLocationCode !== vv.to_location_code,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={(option) => option}
+							getOptionText={Mod.getLocationCodesOptionDisplay}
 							bind:selected={vv.from_location_code}
 						/>
 
@@ -62,7 +62,7 @@
 								(toLocationCode) => toLocationCode !== vv.from_location_code,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={(option) => option}
+							getOptionText={Mod.getLocationCodesOptionDisplay}
 							bind:selected={vv.to_location_code}
 						/>
 					</div>
