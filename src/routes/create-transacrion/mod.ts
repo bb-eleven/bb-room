@@ -16,7 +16,7 @@ export type ItemViewCreateTransactionDetail = IV &
 	CreateTransactionDetail & { from_location_codes: Nullable<string>[] };
 
 export const getLocationCodesInputDisplay = (selected: Nullable<string>) =>
-	inout(selected, 'Select');
+	iu(selected) ? 'Select' : selected === null ? 'Outside' : selected;
 export const getLocationCodesOptionDisplay = (option: Nullable<string>) => inout(option, 'Outside');
 
 export const mapToItemViewCreateTransactionDetail = (
@@ -68,3 +68,6 @@ const mapToCreateTransactionDetail = (
 		};
 	}
 };
+function iut(selected: Nullable<string>, arg1: string) {
+	throw new Error('Function not implemented.');
+}
