@@ -24,7 +24,7 @@
 
 <div class={$$props.class}>
 	<div class="text-blue-600 text-sm mb-2">{label}</div>
-	<div class="w-full flex justify-between items-center gap-2">
+	<div class="w-full flex items-center gap-2">
 		<input
 			disabled={ninou(value) && (value <= min || value >= max)}
 			type="number"
@@ -35,13 +35,13 @@
 		/>
 		<IconButton
 			disabled={value <= min}
-			class="w-9 p-1 bg-blue-300 fill-blue-500 disabled:bg-blue-200 disabled:fill-blue-300"
+			class="shrink-0 w-9 p-1 bg-blue-300 fill-blue-500 disabled:bg-blue-200 disabled:fill-blue-300"
 			icon={IconSvg.Minus}
 			click={() => --value}
 		/>
 		<IconButton
 			disabled={value >= max}
-			class="w-9 p-1 bg-blue-300 fill-blue-500 disabled:bg-blue-200 disabled:fill-blue-300"
+			class="shrink-0 w-9 p-1 bg-blue-300 fill-blue-500 disabled:bg-blue-200 disabled:fill-blue-300"
 			icon={IconSvg.Plus}
 			click={() => ++value}
 		/>
