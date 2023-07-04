@@ -11,7 +11,9 @@
 	export let getOptionText: (selected: any) => string;
 	export let getInputText: (selected?: any) => {};
 	export let selected: any;
+	export let select: (selected: any) => void = () => {};
 	let selectedIndex: number;
+
 	let optionDisplay = getOptionText(selected);
 
 	let rotatingIconData = defaultRotatingIconData();
@@ -25,6 +27,7 @@
 	const selectOption = (item: any, i: number) => {
 		selected = item;
 		selectedIndex = i;
+		select(selected);
 		toggleOptions();
 	};
 </script>

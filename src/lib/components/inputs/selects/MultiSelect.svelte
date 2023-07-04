@@ -11,7 +11,8 @@
 	export let getOptionText: (selectedIndexes: any) => string;
 	export let getInputText: (selectedIndexes: any[]) => {};
 	export let selected: any[] = [];
-	export let selectedIndexes = new Set<number>();
+	export let select: (selected: any[]) => void = () => {};
+	let selectedIndexes = new Set<number>();
 
 	let optionDisplay = getOptionText(selected);
 	let rotatingIconData = defaultRotatingIconData();
@@ -27,6 +28,7 @@
 	const selectOption = (i: number) => {
 		selectedIndexes.has(i) ? selectedIndexes.delete(i) : selectedIndexes.add(i);
 		selectedIndexes = selectedIndexes;
+		select(selected);
 	};
 </script>
 
