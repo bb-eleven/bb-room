@@ -51,20 +51,19 @@
 							options={vv.from_location_codes.filter(
 								(fromLocationCode) => fromLocationCode !== vv.to_location_code,
 							)}
-							getInputText={Mod.getFromLocationsInputDisplay}
+							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={(option) => option}
 							bind:selected={vv.from_location_code}
 						/>
 
 						<SingleSelect
 							label="To location"
-							options={data.locations.filter(
-								({ code: toLocationCode }) => toLocationCode !== vv.from_location_code,
+							options={data.locationCodes.filter(
+								(toLocationCode) => toLocationCode !== vv.from_location_code,
 							)}
-							getInputText={Mod.getToLocationsInputDisplay}
-							getOptionText={(option) => option?.code}
-							selected={undefined}
-							select={(selected) => (vv.to_location_code = selected.code)}
+							getInputText={Mod.getLocationCodesInputDisplay}
+							getOptionText={(option) => option}
+							bind:selected={vv.to_location_code}
 						/>
 					</div>
 					<NumberInput label="Quantity" bind:value={vv.quantity} class="w-1/2 mt-4" />

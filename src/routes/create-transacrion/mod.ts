@@ -14,9 +14,7 @@ type IV = Omit<ItemView['Row'], 'id' | 'category_ids' | 'location_codes'>;
 export type ItemViewCreateTransactionDetail = IV &
 	CreateTransactionDetail & { from_location_codes: string[] };
 
-export const getFromLocationsInputDisplay = (selected: string) => inout(selected, 'Select');
-export const getToLocationsInputDisplay = (selected?: Location['Row']) =>
-	inou(selected) ? 'Select' : selected.code;
+export const getLocationCodesInputDisplay = (selected: string) => inout(selected, 'Select');
 
 export const mapToItemViewCreateTransactionDetail = (
 	itemView: ItemView['Row'],
@@ -31,6 +29,7 @@ export const mapToItemViewCreateTransactionDetail = (
 		from_location_codes: inout(location_codes, []),
 	};
 };
+
 // TODO: update CTD from_location_code and to_location_code types to be nullable
 const mapToCreateTransactionDetail = (
 	itemId?: number,
