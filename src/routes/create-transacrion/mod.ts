@@ -15,6 +15,14 @@ type IV = Omit<ItemView['Row'], 'id' | 'category_ids' | 'location_codes'>;
 export type ItemViewCreateTransactionDetail = IV &
 	CreateTransactionDetail & { from_location_codes: Nullable<string>[] };
 
+export type Author = { value?: string; error?: Nullable<string> };
+
+export const validateAuthor = (author: Author): Author => {
+	author.error = inou(author.value) || author.value === '' ? 'Required' : null;
+	return author;
+};
+export const isValid = (valid: boolean, inputValid: boolean) => valid && inputValid;
+
 export const getLocationCodesInputDisplay = (selected: Nullable<string>) =>
 	iu(selected) ? 'Select' : selected === null ? 'Outside' : selected;
 export const getLocationCodesOptionDisplay = (option: Nullable<string>) => inout(option, 'Outside');

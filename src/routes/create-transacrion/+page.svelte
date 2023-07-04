@@ -13,6 +13,7 @@
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
 	let createTransactionDetails: Mod.CreateTransactionDetail[] = [];
+	let author: Mod.Author = {};
 	let v: Mod.ItemViewCreateTransactionDetail[] = [];
 
 	if (browser) {
@@ -24,7 +25,7 @@
 		}
 	}
 
-	$: console.log(v);
+	// $: author = Mod.validateAuthor(author);
 </script>
 
 <!-- TODO: remove negative margin, 100vh(?) -->
@@ -34,7 +35,13 @@
 	</div>
 
 	<section class="mt-4 h-[80vh] overflow-y-scroll">
-		<Input label="Author" class="mb-4" />
+		<Input
+			label="Author"
+			bind:value={author.value}
+			error={author.error}
+			onBlur={() => (author = Mod.validateAuthor(author))}
+			class="mb-4"
+		/>
 		{#each v as vv}
 			<CollapsibleView class="mb-4">
 				<svelte:fragment slot="title">
