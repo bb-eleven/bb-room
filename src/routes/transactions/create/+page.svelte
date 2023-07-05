@@ -16,14 +16,14 @@
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
 	let author: Author = {};
-	let v: ItemViewCreateTransactionDetail[] = [];
+	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
 	let isValid = false;
 
 	if (browser) {
 		const selectedItemViewsStr = localStorage.getItem('selectedItemViews');
 		if (ninou(selectedItemViewsStr)) {
 			itemViews = JSON.parse(selectedItemViewsStr);
-			v = itemViews.map(Mod.mapToItemViewCreateTransactionDetail);
+			itemViewCreateTransactionDetails = itemViews.map(Mod.mapToItemViewCreateTransactionDetail);
 		}
 	}
 
@@ -31,10 +31,10 @@
 		author = Validators.validateAuthor(author);
 		isValid = Validators.authorHasNoError(author);
 
-		v = v.map((vv) => {
-			vv = Validators.validateItemViewCreateTransactionDetail(vv);
-			isValid &&= Validators.itemViewCreateTransactionDetailHasNoError(vv);
-			return vv;
+		itemViewCreateTransactionDetails = itemViewCreateTransactionDetails.map((ivctd) => {
+			ivctd = Validators.validateItemViewCreateTransactionDetail(ivctd);
+			isValid &&= Validators.itemViewCreateTransactionDetailHasNoError(ivctd);
+			return ivctd;
 		});
 
 		if (!isValid) {
@@ -45,7 +45,7 @@
 		const { data: transactionId, error } = await Mod.createTransaction(
 			data.supabase,
 			author as any,
-			v,
+			itemViewCreateTransactionDetails,
 		);
 		// TODO: Go to new page
 	};
@@ -57,7 +57,7 @@
 		<Title title="Create Transaction" />
 	</div>
 
-	{#if v.length === 0}
+	{#if itemViewCreateTransactionDetails.length === 0}
 		<section class="mt-40">
 			<p class="text-lg mb-2">There are no selected items.</p>
 			<TextButton text="Go to Inventory" click={() => goto('/inventory')} />
@@ -71,12 +71,12 @@
 				onBlur={() => (author = Validators.validateAuthor(author))}
 				class="mb-4"
 			/>
-			{#each v as vv}
+			{#each itemViewCreateTransactionDetails as ivctd}
 				<CollapsibleView class="mb-4">
 					<svelte:fragment slot="title">
-						<span class="text-off-800">{vv.name}</span>
-						{#if ninou(vv.variant_name)}
-							<span class="text-brown-600 ml-2">[{vv.variant_name}]</span>
+						<span class="text-off-800">{ivctd.name}</span>
+						{#if ninou(ivctd.variant_name)}
+							<span class="text-brown-600 ml-2">[{ivctd.variant_name}]</span>
 						{/if}
 					</svelte:fragment>
 
@@ -84,16 +84,16 @@
 						<div class="grid grid-cols-2 gap-4">
 							<SingleSelect
 								label="From location"
-								options={vv.from_location_codes.filter(
-									(fromLocationCode) => fromLocationCode !== vv.to_location_code,
+								options={ivctd.from_location_codes.filter(
+									(fromLocationCode) => fromLocationCode !== ivctd.to_location_code,
 								)}
 								getInputText={Mod.getLocationCodesInputDisplay}
 								getOptionText={Mod.getLocationCodesOptionDisplay}
-								bind:selected={vv.from_location_code}
-								error={vv.errors.from_location_code}
+								bind:selected={ivctd.from_location_code}
+								error={ivctd.errors.from_location_code}
 								onBlur={() =>
-									(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-										vv,
+									(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+										ivctd,
 										'from_location_code',
 										iu,
 									))}
@@ -102,15 +102,15 @@
 							<SingleSelect
 								label="To location"
 								options={data.locationCodes.filter(
-									(toLocationCode) => toLocationCode !== vv.from_location_code,
+									(toLocationCode) => toLocationCode !== ivctd.from_location_code,
 								)}
 								getInputText={Mod.getLocationCodesInputDisplay}
 								getOptionText={Mod.getLocationCodesOptionDisplay}
-								bind:selected={vv.to_location_code}
-								error={vv.errors.to_location_code}
+								bind:selected={ivctd.to_location_code}
+								error={ivctd.errors.to_location_code}
 								onBlur={() =>
-									(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-										vv,
+									(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+										ivctd,
 										'to_location_code',
 										iu,
 									))}
@@ -118,11 +118,11 @@
 						</div>
 						<NumberInput
 							label="Quantity"
-							bind:value={vv.quantity}
-							error={vv.errors.quantity}
+							bind:value={ivctd.quantity}
+							error={ivctd.errors.quantity}
 							onBlur={() =>
-								(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-									vv,
+								(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+									ivctd,
 									'quantity',
 									inou,
 								))}
