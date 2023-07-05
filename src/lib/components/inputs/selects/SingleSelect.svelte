@@ -15,6 +15,7 @@
 	export let selected: any;
 	export let select: (selected: any) => void = () => {};
 	export let error: Nullable<string> = null;
+	export let onBlur: (selected: any) => void = () => {};
 	let selectedIndex: number;
 
 	let optionDisplay = getOptionText(selected);
@@ -32,6 +33,7 @@
 		selectedIndex = i;
 		select(selected);
 		toggleOptions();
+		onBlur(selected);
 	};
 </script>
 
@@ -57,7 +59,10 @@
 		<div
 			class="absolute z-50 min-w-fit w-full max-h-[50vh] rounded-2xl mt-2 bg-blue-300 overflow-y-scroll drop-shadow-2xl shadow-lg"
 			transition:slide={{ duration: 500, easing: cubicOut }}
-			use:clickOutside={toggleOptions}
+			use:clickOutside={() => {
+				toggleOptions();
+				onBlur(selected);
+			}}
 		>
 			{#each options as item, i}
 				<div
