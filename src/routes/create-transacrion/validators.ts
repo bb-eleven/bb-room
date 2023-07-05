@@ -1,10 +1,18 @@
-import { inou, iu } from '$lib/utils';
+import { inou, iu, ninou } from '$lib/utils';
 import type { Nullable } from 'vitest';
 import type { Author, ItemViewCreateTransactionDetail } from './types';
 
 export const validateAuthor = (author: Author): Author => {
 	author.error = inou(author.value) || author.value === '' ? 'Required' : null;
 	return author;
+};
+
+export const authorHasNoError = (author: Author) => inou(author.error);
+
+export const itemViewCreateTransactionDetailHasNoError = (
+	itemViewCreateTransactionDetail: ItemViewCreateTransactionDetail,
+): boolean => {
+	return Object.values(itemViewCreateTransactionDetail.errors).every(inou);
 };
 
 const validateItemViewCreateTransactionDetailField = (

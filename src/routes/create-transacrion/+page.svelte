@@ -16,6 +16,7 @@
 	let itemViews: ItemView['Row'][] = [];
 	let author: Author = {};
 	let v: ItemViewCreateTransactionDetail[] = [];
+	let isValid = false;
 
 	if (browser) {
 		const selectedItemViewsStr = localStorage.getItem('selectedItemViews');
@@ -26,9 +27,27 @@
 		}
 	}
 
-	const submit = () => {
+	const submit = async () => {
 		author = Validators.validateAuthor(author);
-		v = v.map(Validators.validateItemViewCreateTransactionDetail);
+		isValid = Validators.authorHasNoError(author);
+
+		v = v.map((vv) => {
+			vv = Validators.validateItemViewCreateTransactionDetail(vv);
+			isValid &&= Validators.itemViewCreateTransactionDetailHasNoError(vv);
+			return vv;
+		});
+
+		if (!isValid) {
+			return;
+		}
+
+		// Author is validated above
+		const { data: transactionId, error } = await Mod.createTransaction(
+			data.supabase,
+			author as any,
+			v,
+		);
+		// TODO: Go to new page
 	};
 </script>
 

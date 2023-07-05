@@ -6,7 +6,8 @@ type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends read
 	? T
 	: never;
 
-type CreateNewTransactionArgs = Database['public']['Functions']['create_new_transaction']['Args'];
+export type CreateNewTransactionArgs =
+	Database['public']['Functions']['create_new_transaction']['Args'];
 export type CreateTransactionDetail = ArrayElement<
 	CreateNewTransactionArgs['create_transaction_details']
 >;

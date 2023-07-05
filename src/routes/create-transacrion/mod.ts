@@ -1,9 +1,9 @@
 import type { ItemView } from '$lib/database.types.short';
 import { inout, iu } from '$lib/utils';
+import type { Author, CreateNewTransactionArgs, ItemViewCreateTransactionDetail } from './types';
+import type { Database } from '$lib/database.types';
+import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Nullable } from 'vitest';
-import type { ItemViewCreateTransactionDetail } from './types';
-
-export const isValid = (valid: boolean, inputValid: boolean) => valid && inputValid;
 
 export const getLocationCodesInputDisplay = (selected: Nullable<string>) =>
 	iu(selected) ? 'Select' : selected === null ? 'Outside' : selected;
@@ -22,4 +22,30 @@ export const mapToItemViewCreateTransactionDetail = (
 		from_location_codes: [null, ...inout(location_codes, [])],
 		errors: {},
 	};
+};
+
+const mapToCreateNewTransactionArgs = (
+	author: Required<Author>,
+	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
+): CreateNewTransactionArgs => ({
+	_author: author.value,
+	create_transaction_details: itemViewCreateTransactionDetails.map(
+		({ item_id, quantity, from_location_code, to_location_code }) => ({
+			item_id,
+			quantity,
+			from_location_code,
+			to_location_code,
+		}),
+	),
+});
+
+export const createTransaction = async (
+	supabase: SupabaseClient<Database>,
+	author: Required<Author>,
+	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
+) => {
+	return await supabase.rpc(
+		'create_new_transaction',
+		mapToCreateNewTransactionArgs(author, itemViewCreateTransactionDetails),
+	);
 };
