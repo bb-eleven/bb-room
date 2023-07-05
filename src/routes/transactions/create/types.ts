@@ -1,6 +1,6 @@
 import type { ItemView } from '$lib/database.types.short';
 import type { Nullable } from 'vitest';
-import type { Database } from '../../database.types';
+import type { Database } from '../../../database.types';
 import type { ArrayElement } from '$lib/utils';
 
 export type Author = { value?: string; error?: Nullable<string> };

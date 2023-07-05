@@ -98,7 +98,7 @@
 				'selectedItemViews',
 				JSON.stringify([...selectedItemViewIdOriginalIndexMap.values()].map((oi) => itemViews[oi])),
 			);
-		goto('/create-transacrion');
+		goto('/transactions/create');
 	};
 </script>
 
