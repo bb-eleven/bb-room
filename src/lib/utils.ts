@@ -1,3 +1,6 @@
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+	ArrayType extends readonly (infer T)[] ? T : never;
+
 export const iu = <T>(value: T | undefined): value is undefined => value === undefined;
 
 export const inou = <T>(value: T | null | undefined): value is null | undefined =>
