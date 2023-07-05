@@ -9,7 +9,7 @@
 		type="checkbox"
 		{id}
 		bind:checked
-		class="w-5 h-5 mr-3 bg-mirage border-none rounded-[50%] appearance-none 
+		class="w-5 h-5 mr-3 bg-mirage border-none rounded-[50%] appearance-none
     cursor-pointer
     ring-[1.25px] ring-comet
     checked:bg-comet"

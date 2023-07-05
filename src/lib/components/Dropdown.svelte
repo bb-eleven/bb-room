@@ -32,8 +32,10 @@
 						selected = item;
 						showOptions = false;
 					}}
-					class="">{getName(item)}</div
+					class=""
 				>
+					{getName(item)}
+				</div>
 			{/each}
 		</div>
 	{/if}
