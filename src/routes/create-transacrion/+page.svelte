@@ -7,14 +7,15 @@
 	import NumberInput from '$lib/components/inputs/NumberInput.svelte';
 	import SingleSelect from '$lib/components/inputs/selects/SingleSelect.svelte';
 	import type { ItemView } from '$lib/database.types.short';
-	import { ninou } from '$lib/utils';
+	import { inou, iu, ninou } from '$lib/utils';
 	import * as Mod from './mod';
+	import type { Author, ItemViewCreateTransactionDetail } from './types';
+	import * as Validators from './validators';
 
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
-	let createTransactionDetails: Mod.CreateTransactionDetail[] = [];
-	let author: Mod.Author = {};
-	let v: Mod.ItemViewCreateTransactionDetail[] = [];
+	let author: Author = {};
+	let v: ItemViewCreateTransactionDetail[] = [];
 
 	if (browser) {
 		const selectedItemViewsStr = localStorage.getItem('selectedItemViews');
@@ -25,7 +26,10 @@
 		}
 	}
 
-	// $: author = Mod.validateAuthor(author);
+	const submit = () => {
+		author = Validators.validateAuthor(author);
+		v = v.map(Validators.validateItemViewCreateTransactionDetail);
+	};
 </script>
 
 <!-- TODO: remove negative margin, 100vh(?) -->
@@ -39,7 +43,7 @@
 			label="Author"
 			bind:value={author.value}
 			error={author.error}
-			onBlur={() => (author = Mod.validateAuthor(author))}
+			onBlur={() => (author = Validators.validateAuthor(author))}
 			class="mb-4"
 		/>
 		{#each v as vv}
@@ -61,6 +65,13 @@
 							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={Mod.getLocationCodesOptionDisplay}
 							bind:selected={vv.from_location_code}
+							error={vv.errors.from_location_code}
+							onBlur={() =>
+								(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+									vv,
+									'from_location_code',
+									iu,
+								))}
 						/>
 
 						<SingleSelect
@@ -71,15 +82,33 @@
 							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={Mod.getLocationCodesOptionDisplay}
 							bind:selected={vv.to_location_code}
+							error={vv.errors.to_location_code}
+							onBlur={() =>
+								(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+									vv,
+									'to_location_code',
+									iu,
+								))}
 						/>
 					</div>
-					<NumberInput label="Quantity" bind:value={vv.quantity} class="w-1/2 mt-4" />
+					<NumberInput
+						label="Quantity"
+						bind:value={vv.quantity}
+						error={vv.errors.quantity}
+						onBlur={() =>
+							(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+								vv,
+								'quantity',
+								inou,
+							))}
+						class="w-1/2 mt-4"
+					/>
 				</div></CollapsibleView
 			>
 		{/each}
 	</section>
 
 	<div class="absolute bottom-0 w-[calc(100%-1.5rem)] py-3 bg-off-100">
-		<TextButton text="Submit" />
+		<TextButton text="Submit" click={submit} />
 	</div>
 </div>
