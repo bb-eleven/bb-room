@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import CollapsibleView from '$lib/components/CollapsibleView.svelte';
 	import Title from '$lib/components/Title.svelte';
 	import TextButton from '$lib/components/buttons/TextButton.svelte';
@@ -23,7 +24,6 @@
 		if (ninou(selectedItemViewsStr)) {
 			itemViews = JSON.parse(selectedItemViewsStr);
 			v = itemViews.map(Mod.mapToItemViewCreateTransactionDetail);
-			console.log(v);
 		}
 	}
 
@@ -57,77 +57,84 @@
 		<Title title="Create Transaction" />
 	</div>
 
-	<section class="mt-4 h-[80vh] overflow-y-scroll">
-		<Input
-			label="Author"
-			bind:value={author.value}
-			error={author.error}
-			onBlur={() => (author = Validators.validateAuthor(author))}
-			class="mb-4"
-		/>
-		{#each v as vv}
-			<CollapsibleView class="mb-4">
-				<svelte:fragment slot="title">
-					<span class="text-off-800">{vv.name}</span>
-					{#if ninou(vv.variant_name)}
-						<span class="text-brown-600 ml-2">[{vv.variant_name}]</span>
-					{/if}
-				</svelte:fragment>
+	{#if v.length === 0}
+		<section class="mt-40">
+			<p class="text-lg mb-2">There are no selected items.</p>
+			<TextButton text="Go to Inventory" click={() => goto('/inventory')} />
+		</section>
+	{:else}
+		<section class="mt-4 h-[80vh] overflow-y-scroll">
+			<Input
+				label="Author"
+				bind:value={author.value}
+				error={author.error}
+				onBlur={() => (author = Validators.validateAuthor(author))}
+				class="mb-4"
+			/>
+			{#each v as vv}
+				<CollapsibleView class="mb-4">
+					<svelte:fragment slot="title">
+						<span class="text-off-800">{vv.name}</span>
+						{#if ninou(vv.variant_name)}
+							<span class="text-brown-600 ml-2">[{vv.variant_name}]</span>
+						{/if}
+					</svelte:fragment>
 
-				<div slot="body" class="p-3">
-					<div class="grid grid-cols-2 gap-4">
-						<SingleSelect
-							label="From location"
-							options={vv.from_location_codes.filter(
-								(fromLocationCode) => fromLocationCode !== vv.to_location_code,
-							)}
-							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={vv.from_location_code}
-							error={vv.errors.from_location_code}
+					<div slot="body" class="p-3">
+						<div class="grid grid-cols-2 gap-4">
+							<SingleSelect
+								label="From location"
+								options={vv.from_location_codes.filter(
+									(fromLocationCode) => fromLocationCode !== vv.to_location_code,
+								)}
+								getInputText={Mod.getLocationCodesInputDisplay}
+								getOptionText={Mod.getLocationCodesOptionDisplay}
+								bind:selected={vv.from_location_code}
+								error={vv.errors.from_location_code}
+								onBlur={() =>
+									(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+										vv,
+										'from_location_code',
+										iu,
+									))}
+							/>
+
+							<SingleSelect
+								label="To location"
+								options={data.locationCodes.filter(
+									(toLocationCode) => toLocationCode !== vv.from_location_code,
+								)}
+								getInputText={Mod.getLocationCodesInputDisplay}
+								getOptionText={Mod.getLocationCodesOptionDisplay}
+								bind:selected={vv.to_location_code}
+								error={vv.errors.to_location_code}
+								onBlur={() =>
+									(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+										vv,
+										'to_location_code',
+										iu,
+									))}
+							/>
+						</div>
+						<NumberInput
+							label="Quantity"
+							bind:value={vv.quantity}
+							error={vv.errors.quantity}
 							onBlur={() =>
 								(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
 									vv,
-									'from_location_code',
-									iu,
+									'quantity',
+									inou,
 								))}
+							class="w-1/2 mt-4"
 						/>
+					</div></CollapsibleView
+				>
+			{/each}
+		</section>
 
-						<SingleSelect
-							label="To location"
-							options={data.locationCodes.filter(
-								(toLocationCode) => toLocationCode !== vv.from_location_code,
-							)}
-							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={vv.to_location_code}
-							error={vv.errors.to_location_code}
-							onBlur={() =>
-								(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-									vv,
-									'to_location_code',
-									iu,
-								))}
-						/>
-					</div>
-					<NumberInput
-						label="Quantity"
-						bind:value={vv.quantity}
-						error={vv.errors.quantity}
-						onBlur={() =>
-							(vv = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-								vv,
-								'quantity',
-								inou,
-							))}
-						class="w-1/2 mt-4"
-					/>
-				</div></CollapsibleView
-			>
-		{/each}
-	</section>
-
-	<div class="absolute bottom-0 w-[calc(100%-1.5rem)] py-3 bg-off-100">
-		<TextButton text="Submit" click={submit} />
-	</div>
+		<div class="absolute bottom-0 w-[calc(100%-1.5rem)] py-3 bg-off-100">
+			<TextButton text="Submit" click={submit} />
+		</div>
+	{/if}
 </div>
