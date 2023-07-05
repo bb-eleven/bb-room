@@ -16,7 +16,7 @@
 	export let select: (selected: any) => void = () => {};
 	export let error: Nullable<string> = null;
 	export let onBlur: (selected: any) => void = () => {};
-	let selectedIndex: number;
+	let selectedIndex: Nullable<number>;
 
 	let optionDisplay = getOptionText(selected);
 
@@ -29,11 +29,17 @@
 		rotatingIconData = rotateIcon(rotatingIconData);
 	};
 	const selectOption = (item: any, i: number) => {
-		selected = item;
-		selectedIndex = i;
-		select(selected);
-		toggleOptions();
-		onBlur(selected);
+		if (selectedIndex === i) {
+			selected = undefined;
+			selectedIndex = null;
+			select(selected);
+		} else {
+			selected = item;
+			selectedIndex = i;
+			select(selected);
+			toggleOptions();
+			onBlur(selected);
+		}
 	};
 </script>
 
