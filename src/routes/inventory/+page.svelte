@@ -24,7 +24,6 @@
 	let itemViewSelecteds: boolean[];
 	let selectedItemViewSelected: boolean = false;
 
-	// TODO: use map to keep track of
 	let selectedItemViewIdOriginalIndexMap = new Map<number, number>();
 	let searchName = '';
 	let selectedCategories: Category['Row'][];
