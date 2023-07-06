@@ -19,6 +19,8 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 
+	let h: number;
+
 	export let data;
 	let itemViews: ItemView['Row'][] = [];
 	let itemViewSelecteds: boolean[];
@@ -160,7 +162,8 @@
 	<div
 		in:slide={{ duration: 200, easing: cubicOut }}
 		out:slide={{ duration: 300, easing: cubicOut }}
-		class="absolute left-0 bottom-0 right-0 rounded-t-2xl w-[calc(100%-1.5rem)] mx-3 p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-[0px_10px_40px_rgba(0,0,0,0.1)]"
+		class="absolute left-0 -translate-y-full rounded-t-2xl w-[calc(100%-1.5rem)] mx-3 p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-[0px_10px_40px_rgba(0,0,0,0.1)]"
+		style="top: {h}px;"
 	>
 		<div class="absolute right-6 -translate-y-3/4">
 			<CollapseButton
@@ -200,3 +203,4 @@
 		{/if}
 	</div>
 {/if}
+<svelte:window bind:outerHeight={h} />
