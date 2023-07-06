@@ -51,9 +51,8 @@
 	};
 </script>
 
-<!-- TODO: remove negative margin, 100vh(?) -->
-<div class="relative w-full h-[100vh] bg-off-100 p-3 mt-[-0.5rem]">
-	<div class="relative flex items-end gap-2">
+<div class="w-full bg-off-100 p-3">
+	<div class="flex items-end gap-2">
 		<Title title="Create Transaction" />
 	</div>
 
@@ -80,7 +79,7 @@
 						{/if}
 					</svelte:fragment>
 
-					<div slot="body" class="p-3">
+					<div slot="body" class="p-4">
 						<div class="grid grid-cols-2 gap-4">
 							<SingleSelect
 								label="From location"

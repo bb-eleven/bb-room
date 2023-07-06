@@ -22,10 +22,7 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="collapsible-body">
-		<div
-			transition:slide={{ duration: 500, easing: cubicOut }}
-			class="px-4 py-4 flex flex-col gap-4"
-		>
+		<div transition:slide={{ duration: 500, easing: cubicOut }} class="p-4 flex flex-col gap-4">
 			<div>
 				<span class="text-off-600">Total quantity: </span>
 				<span class="text-off-700">{itemView.location_quantities?.reduce((a, b) => a + b)}</span>
