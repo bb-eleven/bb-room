@@ -101,61 +101,59 @@
 	};
 </script>
 
-<div class="relative w-full bg-off-100 p-3">
-	<div class="relative flex items-end gap-2">
-		<Title title="Inventory" />
-		<SearchButton bind:rotatingIconData={searchButtonRotatingIconData} />
+<div class="relative flex items-end gap-2">
+	<Title title="Inventory" />
+	<SearchButton bind:rotatingIconData={searchButtonRotatingIconData} />
 
-		<!-- Search inputs -->
-		{#if searchButtonRotatingIconData.rotated}
-			<div
-				transition:slide={{ duration: 500, easing: cubicOut }}
-				use:clickOutside={() => (searchButtonRotatingIconData.rotated = false)}
-				class="absolute z-50 flex flex-col top-16 rounded-2xl w-full p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-lg"
-			>
-				<Input label="Name" bind:value={searchName} />
+	<!-- Search inputs -->
+	{#if searchButtonRotatingIconData.rotated}
+		<div
+			transition:slide={{ duration: 500, easing: cubicOut }}
+			use:clickOutside={() => (searchButtonRotatingIconData.rotated = false)}
+			class="absolute z-50 flex flex-col top-16 rounded-2xl w-full p-3 gap-4 bg-off-100 drop-shadow-2xl shadow-lg"
+		>
+			<Input label="Name" bind:value={searchName} />
 
-				<MultiSelect
-					label="Categories"
-					bind:selected={selectedCategories}
-					getInputText={Mod.getCategoriesInputDisplay}
-					getOptionText={Mod.getCategoriesOptionDisplay}
-					options={data.categories}
-				/>
+			<MultiSelect
+				label="Categories"
+				bind:selected={selectedCategories}
+				getInputText={Mod.getCategoriesInputDisplay}
+				getOptionText={Mod.getCategoriesOptionDisplay}
+				options={data.categories}
+			/>
 
-				<MultiSelect
-					label="Locations"
-					bind:selected={selectedLocations}
-					getInputText={Mod.getLocationsInputDisplay}
-					getOptionText={Mod.getLocationsOptionDisplay}
-					options={data.locations}
-				/>
+			<MultiSelect
+				label="Locations"
+				bind:selected={selectedLocations}
+				getInputText={Mod.getLocationsInputDisplay}
+				getOptionText={Mod.getLocationsOptionDisplay}
+				options={data.locations}
+			/>
 
-				<div class="flex justify-end mt-4">
-					<TextButton text="Search" click={search} />
-				</div>
+			<div class="flex justify-end mt-4">
+				<TextButton text="Search" click={search} />
 			</div>
-		{/if}
-	</div>
-	<div class="bg-brown-100 px-2 py-1 mt-4 w-fit rounded-lg justify-self-end">
-		<span class="text-sm text-brown-500">showing {itemViews.length} results</span>
-	</div>
-
-	<!-- Items -->
-	{#if ninou(itemViews)}
-		<div class="mt-4 h-[82vh] overflow-y-scroll">
-			{#each itemViews as itemView, i}
-				<CollapsibleItemView
-					bind:itemView={itemViews[i]}
-					selectionButtonType={SelectionButtonType.Check}
-					bind:selected={itemViewSelecteds[i]}
-					select={() => selectItemView(itemView.id, i)}
-					class="mb-4 last:mb-20"
-				/>
-			{/each}
 		</div>
 	{/if}
 </div>
+<div class="bg-brown-100 px-2 py-1 mt-4 w-fit rounded-lg">
+	<span class="text-sm text-brown-500">showing {itemViews.length} results</span>
+</div>
+
+<!-- Items -->
+{#if ninou(itemViews)}
+	<div class="mt-4 h-[82vh] overflow-y-scroll">
+		{#each itemViews as itemView, i}
+			<CollapsibleItemView
+				bind:itemView={itemViews[i]}
+				selectionButtonType={SelectionButtonType.Check}
+				bind:selected={itemViewSelecteds[i]}
+				select={() => selectItemView(itemView.id, i)}
+				class="mb-4 last:mb-20"
+			/>
+		{/each}
+	</div>
+{/if}
 
 {#if selectedItemViewIdOriginalIndexMap.size > 0}
 	<!-- TODO: refactor to its own component -->
