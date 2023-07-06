@@ -13,6 +13,7 @@
 	<div class="text-blue-600 text-sm mb-2">{label}</div>
 	<div>
 		<input
+			type="password"
 			{placeholder}
 			spellcheck="false"
 			bind:value
