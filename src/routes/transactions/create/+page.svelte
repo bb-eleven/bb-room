@@ -129,7 +129,7 @@
 								'quantity',
 								inou,
 							))}
-						class="w-1/2 mt-4"
+						class="w-3/4 md:w-1/2 mt-4"
 					/>
 				</div></CollapsibleView
 			>

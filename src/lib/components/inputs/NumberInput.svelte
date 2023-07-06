@@ -34,7 +34,7 @@
 			{placeholder}
 			bind:value
 			on:blur={onBlur}
-			class="grow px-4 py-1.5 bg-blue-200 placeholder:text-blue-400 text-blue-600 disabled:text-blue-400 select-none rounded-xl border-2 border-blue-400 disabled:border-blue-200 active:outline-none focus:outline-none"
+			class="w-full grow px-4 py-1.5 bg-blue-200 placeholder:text-blue-400 text-blue-600 disabled:text-blue-400 select-none rounded-xl border-2 border-blue-400 disabled:border-blue-200 active:outline-none focus:outline-none"
 		/>
 		<IconButton
 			disabled={value <= min}
