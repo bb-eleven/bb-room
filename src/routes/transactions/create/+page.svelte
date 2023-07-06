@@ -14,6 +14,11 @@
 	import * as Validators from './validators';
 
 	export let data;
+
+	if (inou(data.session) && browser) {
+		goto('/login', { state: { redirect: '/transactions/create' }, replaceState: true });
+	}
+
 	let itemViews: ItemView['Row'][] = [];
 	let author: Author = {};
 	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
