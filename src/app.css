@@ -3,10 +3,15 @@
 @tailwind utilities;
 
 @layer base {
+	html {
+		-webkit-tap-highlight-color: transparent;
+	}
+
 	@font-face {
 		font-family: 'MeshedDisplay-SemiBold';
 		src: url('/fonts/MeshedDisplay-SemiBold.woff2') format('woff2'),
-			/* Modern Browsers */ url('/fonts/MeshedDisplay-SemiBold.otf') format('opentype'); /* Safari, Android, iOS */
+			/* Modern Browsers */ url('/fonts/MeshedDisplay-SemiBold.otf') format('opentype');
+		/* Safari, Android, iOS */
 		font-style: normal;
 		font-weight: normal;
 		text-rendering: optimizeLegibility;
@@ -15,7 +20,8 @@
 	@font-face {
 		font-family: 'BLMelody-Regular';
 		src: url('/fonts/BLMelody-Regular.woff2') format('woff2'),
-			/* Modern Browsers */ url('/fonts/BLMelody-Regular.otf') format('opentype'); /* Safari, Android, iOS */
+			/* Modern Browsers */ url('/fonts/BLMelody-Regular.otf') format('opentype');
+		/* Safari, Android, iOS */
 		font-style: normal;
 		font-weight: normal;
 		text-rendering: optimizeLegibility;
