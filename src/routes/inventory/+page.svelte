@@ -12,7 +12,7 @@
 	import CollapsibleItemView from './CollapsibleItemView.svelte';
 	import { inou, ninou } from '$lib/utils.js';
 	import { clickOutside } from '$lib/click-outside.js';
-	import { defaultRotatingIconData } from '$lib/components/icons/rotating-icon.js';
+	import { defaultRotatingIconData, rotateIcon } from '$lib/components/icons/rotating-icon.js';
 	import CollapseButton from '$lib/components/buttons/CollapseButton.svelte';
 	import { IconSvg } from '$lib/components/icons/icon-svg.js';
 	import type { Nullable } from 'vitest';
@@ -46,6 +46,8 @@
 			selectedCategories,
 			selectedLocations,
 		);
+
+		searchButtonRotatingIconData = rotateIcon(searchButtonRotatingIconData);
 	};
 
 	$: selectedItemViewsLength = Object.keys(selectedItemViews).length;
