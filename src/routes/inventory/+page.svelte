@@ -185,7 +185,7 @@
 			<div
 				in:slide={{ duration: 300, easing: backIn }}
 				out:slide={{ duration: 400, easing: cubicOut }}
-				class="max-h-[50vh] mt-4 overflow-y-scroll"
+				class="max-h-[40vh] mt-4 overflow-y-scroll"
 			>
 				{#each Object.values(selectedItemViews) as selectedItemView}
 					<div in:slide={{ duration: 300 }} out:slide={{ duration: 100 }}>
