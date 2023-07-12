@@ -6,7 +6,7 @@
 	import MultiSelect from '$lib/components/inputs/selects/MultiSelect.svelte';
 	import { backIn, cubicOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
-	import type { Category, Location } from '$lib/database.types.short.js';
+	import type { Category, ItemView, Location } from '$lib/database.types.short.js';
 	import * as Mod from './mod.js';
 	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type.js';
 	import CollapsibleItemView from './CollapsibleItemView.svelte';
@@ -80,8 +80,7 @@
 	};
 
 	const openCreateTransactionPage = () => {
-		browser &&
-			localStorage.setItem('selectedItemViews', JSON.stringify(Object.values(selectedItemViews)));
+		browser && localStorage.setItem('selectedItemViews', JSON.stringify(selectedItemViews));
 		goto('/transactions/create');
 	};
 </script>
