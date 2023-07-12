@@ -53,6 +53,11 @@
 			author as any,
 			itemViewCreateTransactionDetails,
 		);
+
+		if (browser) {
+			localStorage.removeItem('selectedItemViews');
+		}
+
 		// TODO: Go to new page
 	};
 </script>

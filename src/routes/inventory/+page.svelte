@@ -36,7 +36,20 @@
 
 	Mod.getItemViews(data.supabase).then((data) => {
 		itemViews = data ?? {};
-		itemViewIdSelecteds = Object.fromEntries(Object.keys(itemViews).map((id) => [id, false]));
+
+		if (browser) {
+			const selectedItemViewsStr = localStorage.getItem('selectedItemViews');
+			if (ninou(selectedItemViewsStr)) {
+				selectedItemViews = JSON.parse(selectedItemViewsStr);
+			}
+		}
+
+		itemViewIdSelecteds = Object.fromEntries(
+			Object.keys(itemViews).map((_id) => {
+				const id = Number(_id);
+				return [id, selectedItemViews.hasOwnProperty(id)];
+			}),
+		);
 	});
 
 	const search = async () => {
