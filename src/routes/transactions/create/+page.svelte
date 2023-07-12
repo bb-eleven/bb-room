@@ -72,7 +72,7 @@
 		<TextButton text="Go to Inventory" click={() => goto('/inventory')} />
 	</section>
 {:else}
-	<section class="mt-4 h-[80vh] overflow-y-scroll">
+	<section class="mt-4 h-[80%] overflow-y-scroll">
 		<Input
 			label="Author"
 			bind:value={author.value}
