@@ -1,10 +1,10 @@
 import type { Category, ItemView, Location } from '$lib/database.types.short';
 import type { Database } from '$lib/database.types';
-import { inou, ninou } from '$lib/utils';
+import { inout, ninou } from '$lib/utils';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Nullable } from 'vitest';
 
 export type SelectItemView = ItemView['Row'] & { selected: boolean; originalIndex: number };
+export type ItemViewMap = { [id: number]: ItemView['Row'] };
 
 // Locations MultiSelect
 export const getLocationsOptionDisplay = (selected?: Location['Row']) => selected?.code ?? '';
@@ -16,14 +16,17 @@ export const getCategoriesOptionDisplay = (selected?: Category['Row']) => select
 export const getCategoriesInputDisplay = (selected?: Category['Row'][]) =>
 	ninou(selected) && selected.length > 0 ? selected.map((c) => c.name).join(', ') : 'Select';
 
-export const getItemViews = async (supabase: SupabaseClient<Database>) => {
+const toItemViewMap = (itemViews: ItemView['Row'][]): ItemViewMap =>
+	Object.assign({}, ...itemViews.map((iv) => ({ [iv.id ?? -1]: iv })));
+
+export const getItemViews = async (supabase: SupabaseClient<Database>): Promise<ItemViewMap> => {
 	const { data: itemViews, error } = await supabase
 		.from('item_view')
 		.select()
 		.order('category_names')
 		.order('name')
 		.order('variant_name');
-	return itemViews;
+	return toItemViewMap(inout(itemViews, []));
 };
 
 export const filterItemViews = async (
@@ -31,7 +34,7 @@ export const filterItemViews = async (
 	name: string,
 	categories: Category['Row'][],
 	locations: Location['Row'][],
-): Promise<ItemView['Row'][]> => {
+): Promise<ItemViewMap> => {
 	const { data: itemViews, error } = await supabase
 		.rpc('filter_item_view', {
 			_name_query: `%${name}%`,
@@ -42,5 +45,5 @@ export const filterItemViews = async (
 		.order('category_names')
 		.order('name')
 		.order('variant_name');
-	return itemViews ?? [];
+	return toItemViewMap(inout(itemViews, []));
 };
