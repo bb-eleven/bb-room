@@ -6,7 +6,7 @@
 	import MultiSelect from '$lib/components/inputs/selects/MultiSelect.svelte';
 	import { backIn, cubicOut } from 'svelte/easing';
 	import { slide } from 'svelte/transition';
-	import type { Category, ItemView, Location } from '$lib/database.types.short.js';
+	import type { Category, Location } from '$lib/database.types.short.js';
 	import * as Mod from './mod.js';
 	import { SelectionButtonType } from '$lib/components/buttons/selection-button-type.js';
 	import CollapsibleItemView from './CollapsibleItemView.svelte';
@@ -22,11 +22,12 @@
 	let h: number;
 
 	export let data;
-	let itemViews: ItemView['Row'][] = [];
-	let itemViewSelecteds: boolean[];
+	let itemViews: Mod.ItemViewMap = {};
+	let itemViewIdSelecteds: { [id: number]: boolean } = {};
+	let selectedItemViews: Mod.ItemViewMap = {};
+	let selectedItemViewsLength: number = 0;
 	let selectedItemViewSelected: boolean = false;
 
-	let selectedItemViewIdOriginalIndexMap = new Map<number, number>();
 	let searchName = '';
 	let selectedCategories: Category['Row'][];
 	let selectedLocations: Location['Row'][];
@@ -34,9 +35,8 @@
 	let collapseSelectedItemViewsTab = true;
 
 	Mod.getItemViews(data.supabase).then((data) => {
-		itemViews = data ?? [];
-		itemViewSelecteds = new Array(itemViews.length).fill(false);
-		selectedItemViewIdOriginalIndexMap = new Map<number, number>();
+		itemViews = data ?? {};
+		itemViewIdSelecteds = Object.fromEntries(Object.keys(itemViews).map((id) => [id, false]));
 	});
 
 	const search = async () => {
@@ -46,59 +46,40 @@
 			selectedCategories,
 			selectedLocations,
 		);
-		searchButtonRotatingIconData.rotated = false;
-		itemViewSelecteds = new Array(itemViews.length).fill(false);
-		selectedItemViewIdOriginalIndexMap = new Map<number, number>();
 	};
 
-	const selectItemView = (id: Nullable<number>, i: number) => {
+	$: selectedItemViewsLength = Object.keys(selectedItemViews).length;
+
+	const selectItemView = (id: Nullable<number>, selected: boolean) => {
 		if (inou(id)) {
 			return;
 		}
 
-		if (selectedItemViewIdOriginalIndexMap.has(id)) {
-			itemViewSelecteds[i] = false;
-			selectedItemViewIdOriginalIndexMap.delete(id);
-
-			if (selectedItemViewIdOriginalIndexMap.size === 0) {
-				collapseSelectedItemViewsTab = true;
-			}
+		if (selectedItemViews.hasOwnProperty(id)) {
+			delete selectedItemViews[id];
+			itemViewIdSelecteds[id] = false;
 		} else {
-			itemViewSelecteds[i] = true;
-			selectedItemViewIdOriginalIndexMap.set(id, i);
+			selectedItemViews[id] = itemViews[id];
+			itemViewIdSelecteds[id] = true;
 		}
 
-		selectedItemViewIdOriginalIndexMap = selectedItemViewIdOriginalIndexMap;
+		selectedItemViews = selectedItemViews;
+		itemViewIdSelecteds = itemViewIdSelecteds;
 	};
 
 	const deselectItemView = (id: Nullable<number>) => {
-		if (inou(id)) {
-			return;
+		if (inou(id) || !selectedItemViews.hasOwnProperty(id)) {
+			return false;
 		}
 
-		let oi = selectedItemViewIdOriginalIndexMap.get(id);
-		if (inou(oi)) {
-			return;
-		}
-
-		itemViewSelecteds[oi] = false;
-		selectedItemViewIdOriginalIndexMap.delete(id);
-
-		if (selectedItemViewIdOriginalIndexMap.size === 0) {
-			collapseSelectedItemViewsTab = true;
-		}
-
-		itemViewSelecteds = itemViewSelecteds;
-		selectedItemViewIdOriginalIndexMap = selectedItemViewIdOriginalIndexMap;
+		delete selectedItemViews[id];
+		itemViewIdSelecteds[id] = false;
 		selectedItemViewSelected = false;
 	};
 
 	const openCreateTransactionPage = () => {
 		browser &&
-			localStorage.setItem(
-				'selectedItemViews',
-				JSON.stringify([...selectedItemViewIdOriginalIndexMap.values()].map((oi) => itemViews[oi])),
-			);
+			localStorage.setItem('selectedItemViews', JSON.stringify(Object.values(selectedItemViews)));
 		goto('/transactions/create');
 	};
 </script>
@@ -139,25 +120,25 @@
 	{/if}
 </div>
 <div class="bg-brown-100 px-2 py-1 mt-4 w-fit rounded-lg">
-	<span class="text-sm text-brown-500">showing {itemViews.length} results</span>
+	<span class="text-sm text-brown-500">showing {Object.keys(itemViews).length} results</span>
 </div>
 
 <!-- Items -->
 {#if ninou(itemViews)}
 	<div class="mt-4 h-[82vh] overflow-y-scroll">
-		{#each itemViews as itemView, i}
+		{#each Object.values(itemViews) as itemView, i}
 			<CollapsibleItemView
-				bind:itemView={itemViews[i]}
+				bind:itemView={itemViews[itemView.id ?? -1]}
 				selectionButtonType={SelectionButtonType.Check}
-				bind:selected={itemViewSelecteds[i]}
-				select={() => selectItemView(itemView.id, i)}
+				bind:selected={itemViewIdSelecteds[itemView.id ?? -1]}
+				select={(s) => selectItemView(itemView.id, s)}
 				class="mb-4 last:mb-20"
 			/>
 		{/each}
 	</div>
 {/if}
 
-{#if selectedItemViewIdOriginalIndexMap.size > 0}
+{#if selectedItemViewsLength > 0}
 	<!-- TODO: refactor to its own component -->
 	<div
 		in:slide={{ duration: 200, easing: cubicOut }}
@@ -174,9 +155,13 @@
 		</div>
 
 		<div class="flex gap-2 items-center">
-			<div class="px-3 py-2 bg-brown-100 text-brown-500 rounded-xl">
+			<!-- <div class="px-3 py-2 bg-brown-100 text-brown-500 rounded-xl">
 				{selectedItemViewIdOriginalIndexMap.size}
 				{selectedItemViewIdOriginalIndexMap.size === 1 ? 'item' : 'items'} selected
+			</div> -->
+			<div class="px-3 py-2 bg-brown-100 text-brown-500 rounded-xl">
+				{selectedItemViewsLength}
+				{selectedItemViewsLength === 1 ? 'item' : 'items'} selected
 			</div>
 
 			<TextButton text="Next" click={() => openCreateTransactionPage()} />
@@ -188,13 +173,13 @@
 				out:slide={{ duration: 400, easing: cubicOut }}
 				class="max-h-[50vh] mt-4 overflow-y-scroll"
 			>
-				{#each [...selectedItemViewIdOriginalIndexMap.values()].map((oi) => itemViews[oi]) as selectedItemView}
+				{#each Object.values(selectedItemViews) as selectedItemView}
 					<div in:slide={{ duration: 300 }} out:slide={{ duration: 100 }}>
 						<CollapsibleItemView
 							itemView={selectedItemView}
 							selectionButtonType={SelectionButtonType.X}
 							bind:selected={selectedItemViewSelected}
-							select={() => deselectItemView(selectedItemView.id)}
+							select={() => deselectItemView(selectedItemView?.id)}
 							class="mb-4"
 						/>
 					</div>
