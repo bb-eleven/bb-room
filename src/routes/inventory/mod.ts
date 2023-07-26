@@ -1,7 +1,8 @@
 import type { Category, ItemView, Location } from '$lib/database.types.short';
 import type { Database } from '$lib/database.types';
-import { inout, ninou } from '$lib/utils';
+import { inou, inout, ninou } from '$lib/utils';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Nullable } from 'vitest';
 
 export type SelectItemView = ItemView['Row'] & { selected: boolean; originalIndex: number };
 export type ItemViewMap = { [id: number]: ItemView['Row'] };
@@ -46,4 +47,25 @@ export const filterItemViews = async (
 		.order('name')
 		.order('variant_name');
 	return toItemViewMap(inout(itemViews, []));
+};
+
+export const toLocationCodeQuantities = (
+	codes: Nullable<string[]>,
+	quantities: Nullable<number[]>,
+): [string, number][] => {
+	if (inou(codes) || inou(quantities) || codes.length !== quantities.length) {
+		return [];
+	}
+
+	let locationCodeQuantities: [string, number][] = [];
+
+	for (let i = 0; i < codes.length ?? 0; i++) {
+		if (quantities[i] < 1) {
+			continue;
+		}
+
+		locationCodeQuantities.push([codes[i], quantities[i]]);
+	}
+
+	return locationCodeQuantities;
 };

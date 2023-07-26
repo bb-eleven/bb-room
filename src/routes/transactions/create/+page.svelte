@@ -9,6 +9,7 @@
 	import SingleSelect from '$lib/components/inputs/selects/SingleSelect.svelte';
 	import type { ItemView } from '$lib/database.types.short';
 	import { inou, iu, ninou } from '$lib/utils';
+	import type { ItemViewMap } from '../../inventory/mod';
 	import * as Mod from './mod';
 	import type { Author, ItemViewCreateTransactionDetail } from './types';
 	import * as Validators from './validators';
@@ -27,7 +28,7 @@
 	if (browser) {
 		const selectedItemViewsStr = localStorage.getItem('selectedItemViews');
 		if (ninou(selectedItemViewsStr)) {
-			itemViews = JSON.parse(selectedItemViewsStr);
+			itemViews = Object.values(JSON.parse(selectedItemViewsStr) as ItemViewMap);
 			itemViewCreateTransactionDetails = itemViews.map(Mod.mapToItemViewCreateTransactionDetail);
 		}
 	}
@@ -52,6 +53,11 @@
 			author as any,
 			itemViewCreateTransactionDetails,
 		);
+
+		if (browser) {
+			localStorage.removeItem('selectedItemViews');
+		}
+
 		// TODO: Go to new page
 	};
 </script>
@@ -66,7 +72,7 @@
 		<TextButton text="Go to Inventory" click={() => goto('/inventory')} />
 	</section>
 {:else}
-	<section class="mt-4 h-[80vh] overflow-y-scroll">
+	<section class="mt-4 h-[80%] overflow-y-scroll">
 		<Input
 			label="Author"
 			bind:value={author.value}
