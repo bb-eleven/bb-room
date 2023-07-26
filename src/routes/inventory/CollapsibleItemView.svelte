@@ -49,10 +49,6 @@
 		> -->
 		<div class="p-4 pt-0 flex flex-col gap-4">
 			<div>
-				<span class="text-off-600">Total quantity: </span>
-				<span class="text-off-700">{itemView.location_quantities?.reduce((a, b) => a + b)}</span>
-			</div>
-			<div>
 				<span class="text-off-600">Locations: </span>
 				<span class="text-off-700"
 					>{locationCodeQuantities
