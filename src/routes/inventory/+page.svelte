@@ -95,6 +95,9 @@
 
 		delete selectedItemViews[id];
 		itemViewIdSelecteds[id] = false;
+
+		selectedItemViews = selectedItemViews;
+		itemViewIdSelecteds = itemViewIdSelecteds;
 		selectedItemViewSelected = false;
 	};
 
@@ -199,7 +202,8 @@
 				class="max-h-[40vh] mt-4 overflow-y-scroll"
 			>
 				{#each Object.values(selectedItemViews) as selectedItemView}
-					<div in:slide={{ duration: 300 }} out:slide={{ duration: 100 }}>
+					<!-- <div in:slide={{ duration: 300 }} out:slide={{ duration: 100 }}> -->
+					<div>
 						<CollapsibleItemView
 							itemView={selectedItemView}
 							selectionButtonType={SelectionButtonType.X}
