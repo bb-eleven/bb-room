@@ -151,19 +151,17 @@
 </div>
 
 <!-- Items -->
-<div style="display: {inou(itemViews) ? 'none' : 'block'}">
-	<div class="mt-4 h-[82%] overflow-y-scroll">
-		{#each Object.values(itemViews) as itemView, i}
-			<CollapsibleItemView
-				bind:itemView={itemViews[itemView.id ?? -1]}
-				selectionButtonType={SelectionButtonType.Check}
-				bind:selected={itemViewIdSelecteds[itemView.id ?? -1]}
-				collapsed={collapseAll}
-				select={(s) => selectItemView(itemView.id, s)}
-				class="mb-4 last:mb-20"
-			/>
-		{/each}
-	</div>
+<div class="mt-4 h-[82%] overflow-y-scroll" style="display: {inou(itemViews) ? 'none' : 'block'}">
+	{#each Object.values(itemViews) as itemView, i}
+		<CollapsibleItemView
+			bind:itemView={itemViews[itemView.id ?? -1]}
+			selectionButtonType={SelectionButtonType.Check}
+			bind:selected={itemViewIdSelecteds[itemView.id ?? -1]}
+			collapsed={collapseAll}
+			select={(s) => selectItemView(itemView.id, s)}
+			class="mb-4 last:mb-20"
+		/>
+	{/each}
 </div>
 
 {#if selectedItemViewsLength > 0}
