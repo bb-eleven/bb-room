@@ -19,11 +19,10 @@
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 
-	let h: number;
-
 	export let data;
 	let itemViews: Mod.ItemViewMap = {};
 	let itemViewIdSelecteds: { [id: number]: boolean } = {};
+	let itemViewIdCollapseds: boolean[] = [];
 	let selectedItemViews: Mod.ItemViewMap = {};
 	let selectedItemViewsLength: number = 0;
 	let selectedItemViewSelected: boolean = false;
@@ -33,6 +32,8 @@
 	let selectedLocations: Location['Row'][];
 	let searchButtonRotatingIconData = defaultRotatingIconData();
 	let collapseSelectedItemViewsTab = true;
+	let collapseAllButtonText = 'collapse all';
+	let collapseAll = false;
 
 	Mod.getItemViews(data.supabase).then((data) => {
 		itemViews = data ?? {};
@@ -51,6 +52,11 @@
 			}),
 		);
 	});
+
+	const toggleCollapse = () => {
+		collapseAll = !collapseAll;
+	};
+	$: collapseAllButtonText = collapseAll ? 'expand all' : 'collapse all';
 
 	const search = async () => {
 		itemViews = await Mod.filterItemViews(
@@ -133,24 +139,32 @@
 		</div>
 	{/if}
 </div>
-<div class="bg-brown-100 px-2 py-1 mt-4 w-fit rounded-lg">
-	<span class="text-sm text-brown-500">showing {Object.keys(itemViews).length} results</span>
+<div class="mt-4 flex gap-4 items-end">
+	<span class="block bg-brown-100 p-2 w-fit rounded-lg text-sm text-brown-500"
+		>showing {Object.keys(itemViews).length} results
+	</span>
+	<TextButton
+		text={collapseAllButtonText}
+		click={toggleCollapse}
+		class="rounded-lg px-2 py-1.5 h-fit"
+	/>
 </div>
 
 <!-- Items -->
-{#if ninou(itemViews)}
+<div style="display: {inou(itemViews) ? 'none' : 'block'}">
 	<div class="mt-4 h-[82%] overflow-y-scroll">
 		{#each Object.values(itemViews) as itemView, i}
 			<CollapsibleItemView
 				bind:itemView={itemViews[itemView.id ?? -1]}
 				selectionButtonType={SelectionButtonType.Check}
 				bind:selected={itemViewIdSelecteds[itemView.id ?? -1]}
+				collapsed={collapseAll}
 				select={(s) => selectItemView(itemView.id, s)}
 				class="mb-4 last:mb-20"
 			/>
 		{/each}
 	</div>
-{/if}
+</div>
 
 {#if selectedItemViewsLength > 0}
 	<!-- TODO: refactor to its own component -->
@@ -161,7 +175,7 @@
 	>
 		<div class="absolute right-6 -translate-y-3/4">
 			<CollapseButton
-				click={() => (collapseSelectedItemViewsTab = !collapseSelectedItemViewsTab)}
+				bind:collapsed={collapseSelectedItemViewsTab}
 				icon={IconSvg.ChevronUp}
 				class="bg-yellow-400 fill-yellow-600 animate-slide-up"
 			/>
@@ -192,6 +206,7 @@
 							itemView={selectedItemView}
 							selectionButtonType={SelectionButtonType.X}
 							bind:selected={selectedItemViewSelected}
+							collapsed={true}
 							select={() => deselectItemView(selectedItemView?.id)}
 							class="mb-4"
 						/>

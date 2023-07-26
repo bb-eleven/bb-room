@@ -10,6 +10,7 @@
 
 	export let itemView: ItemView['Row'];
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
+	export let collapsed = false;
 	export let selected = false;
 	export let select: (selected: boolean) => void = (selected) => {};
 
@@ -19,7 +20,13 @@
 	);
 </script>
 
-<CollapsibleView bind:selected bind:selectionButtonType {select} class={$$props.class}>
+<CollapsibleView
+	bind:collapsed
+	bind:selected
+	bind:selectionButtonType
+	{select}
+	class={$$props.class}
+>
 	<svelte:fragment slot="title">
 		<span class="text-off-800">{itemView.name}</span>
 		{#if ninou(itemView.variant_name)}
@@ -35,10 +42,12 @@
 	</svelte:fragment>
 
 	<svelte:fragment slot="collapsible-body">
-		<div
+		<!-- TODO (#27): fix bad performance when using Svelte's transitions -->
+		<!-- <div
 			transition:slide={{ duration: 500, easing: cubicOut }}
 			class="p-4 pt-0 flex flex-col gap-4"
-		>
+		> -->
+		<div class="p-4 pt-0 flex flex-col gap-4">
 			<div>
 				<span class="text-off-600">Total quantity: </span>
 				<span class="text-off-700">{itemView.location_quantities?.reduce((a, b) => a + b)}</span>

@@ -4,7 +4,7 @@
 	import type { SelectionButtonType } from './buttons/selection-button-type';
 	import type { Nullable } from 'vitest';
 
-	let collapsed = true; // Collapsed by default
+	export let collapsed = true;
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
 	export let selected: boolean = false;
 	export let select: (selected: boolean) => void = () => {};
@@ -23,7 +23,7 @@
 		<div class="relative min-w-[6rem]">
 			<!-- Button container -->
 			<div class="absolute right-0 translate-y-1 flex flex-row gap-2">
-				<CollapseButton click={() => (collapsed = !collapsed)} />
+				<CollapseButton bind:collapsed />
 				<SelectionButton
 					type={selectionButtonType}
 					bind:clicked={selected}
