@@ -1,0 +1,1 @@
+ALTER TABLE item_category ADD PRIMARY KEY (item_id, category_id);
