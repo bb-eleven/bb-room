@@ -6,11 +6,17 @@
 	import type { ItemView } from '$lib/database.types.short';
 	import { ninou } from '$lib/utils';
 	import CollapsibleView from '../../lib/components/CollapsibleView.svelte';
+	import { toLocationCodeQuantities } from './mod';
 
 	export let itemView: ItemView['Row'];
 	export let selectionButtonType: Nullable<SelectionButtonType> = null;
 	export let selected = false;
 	export let select: (selected: boolean) => void = (selected) => {};
+
+	const locationCodeQuantities = toLocationCodeQuantities(
+		itemView.location_codes,
+		itemView.location_quantities,
+	);
 </script>
 
 <CollapsibleView bind:selected bind:selectionButtonType {select} class={$$props.class}>
@@ -39,7 +45,11 @@
 			</div>
 			<div>
 				<span class="text-off-600">Locations: </span>
-				<span class="text-off-700">{itemView.location_codes?.join(', ')}</span>
+				<span class="text-off-700"
+					>{locationCodeQuantities
+						.map(([code, quantity]) => `${code} (${quantity})`)
+						.join(', ')}</span
+				>
 			</div>
 		</div>
 	</svelte:fragment>
