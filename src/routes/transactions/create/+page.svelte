@@ -59,6 +59,9 @@
 		}
 
 		// TODO: Go to new page
+		if (browser) {
+			goto('/inventory');
+		}
 	};
 </script>
 
