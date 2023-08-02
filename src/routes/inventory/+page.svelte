@@ -101,9 +101,9 @@
 		selectedItemViewSelected = false;
 	};
 
-	const openCreateTransactionPage = () => {
+	const openPage = (path: string) => {
 		browser && localStorage.setItem('selectedItemViews', JSON.stringify(selectedItemViews));
-		goto('/transactions/create');
+		goto(path);
 	};
 </script>
 
@@ -192,7 +192,8 @@
 				{selectedItemViewsLength === 1 ? 'item' : 'items'} selected
 			</div>
 
-			<TextButton text="Next" click={() => openCreateTransactionPage()} />
+			<TextButton text="Move" click={() => openPage('/transactions/create')} />
+			<TextButton text="Mass Move" click={() => openPage('/transactions/mass-move')} />
 		</div>
 
 		{#if !collapseSelectedItemViewsTab}

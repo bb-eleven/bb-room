@@ -9,20 +9,28 @@
 	import SingleSelect from '$lib/components/inputs/selects/SingleSelect.svelte';
 	import type { ItemView } from '$lib/database.types.short';
 	import { inou, iu, ninou } from '$lib/utils';
+	import type { Nullable } from 'vitest';
 	import type { ItemViewMap } from '../../inventory/mod';
-	import * as Mod from './mod';
-	import type { Author, ItemViewCreateTransactionDetail } from './types';
+	import * as Mod from '../create/mod';
+	import type { Author, ItemViewCreateTransactionDetail } from '../create/types';
+	import * as CreateValidators from '../create/validators';
 	import * as Validators from './validators';
 
 	export let data;
 
 	if (inou(data.session) && browser) {
-		goto('/login', { state: { redirect: '/transactions/create' }, replaceState: true });
+		goto('/login', { state: { redirect: '/transactions/mass-move' }, replaceState: true });
 	}
 
 	let itemViews: ItemView['Row'][] = [];
 	let author: Author = {};
 	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
+
+	let fromLocationCode: Nullable<string> = undefined;
+	let fromLocationCodeError: Nullable<string> = null;
+	let toLocationCode: Nullable<string> = undefined;
+	let toLocationCodeError: Nullable<string> = null;
+
 	let isValid = false;
 
 	if (browser) {
@@ -30,18 +38,35 @@
 		if (ninou(selectedItemViewsStr)) {
 			itemViews = Object.values(JSON.parse(selectedItemViewsStr) as ItemViewMap);
 			itemViewCreateTransactionDetails = itemViews.map((iv) =>
-				Mod.mapToItemViewCreateTransactionDetail(iv),
+				Mod.mapToItemViewCreateTransactionDetail(iv, fromLocationCode, toLocationCode),
 			);
 		}
 	}
 
+	$: itemViewCreateTransactionDetails.forEach(
+		(_ivctd, i) =>
+			(itemViewCreateTransactionDetails[i].from_location_code = fromLocationCode as string),
+	);
+	$: itemViewCreateTransactionDetails.forEach(
+		(_ivctd, i) =>
+			(itemViewCreateTransactionDetails[i].to_location_code = toLocationCode as string),
+	);
+
 	const submit = async () => {
-		author = Validators.validateAuthor(author);
-		isValid = Validators.authorHasNoError(author);
+		console.log(itemViewCreateTransactionDetails);
+		author = CreateValidators.validateAuthor(author);
+
+		fromLocationCodeError = Validators.validateLocationCode(fromLocationCode);
+		toLocationCodeError = Validators.validateLocationCode(toLocationCode);
+
+		isValid =
+			CreateValidators.authorHasNoError(author) &&
+			inou(fromLocationCodeError) &&
+			inou(toLocationCodeError);
 
 		itemViewCreateTransactionDetails = itemViewCreateTransactionDetails.map((ivctd) => {
-			ivctd = Validators.validateItemViewCreateTransactionDetail(ivctd);
-			isValid &&= Validators.itemViewCreateTransactionDetailHasNoError(ivctd);
+			ivctd = CreateValidators.validateItemViewCreateTransactionDetail(ivctd);
+			isValid &&= CreateValidators.itemViewCreateTransactionDetailHasNoError(ivctd);
 			return ivctd;
 		});
 
@@ -77,16 +102,35 @@
 		<TextButton text="Go to Inventory" click={() => goto('/inventory')} />
 	</section>
 {:else}
-	<section class="mt-4 h-[80%] overflow-y-scroll">
+	<section class="mt-4 space-y-4 h-[80%] overflow-y-scroll">
 		<Input
 			label="Author"
 			bind:value={author.value}
 			error={author.error}
-			onBlur={() => (author = Validators.validateAuthor(author))}
-			class="mb-4"
+			onBlur={() => (author = CreateValidators.validateAuthor(author))}
 		/>
+		<SingleSelect
+			label="From location"
+			options={data.locationCodes.filter((fromLocationCode) => fromLocationCode !== toLocationCode)}
+			getInputText={Mod.getLocationCodesInputDisplay}
+			getOptionText={Mod.getLocationCodesOptionDisplay}
+			bind:selected={fromLocationCode}
+			error={fromLocationCodeError}
+			onBlur={() => (fromLocationCodeError = Validators.validateLocationCode(fromLocationCode))}
+		/>
+
+		<SingleSelect
+			label="To location"
+			options={data.locationCodes.filter((toLocationCode) => toLocationCode !== fromLocationCode)}
+			getInputText={Mod.getLocationCodesInputDisplay}
+			getOptionText={Mod.getLocationCodesOptionDisplay}
+			bind:selected={toLocationCode}
+			error={toLocationCodeError}
+			onBlur={() => (toLocationCodeError = Validators.validateLocationCode(toLocationCode))}
+		/>
+
 		{#each itemViewCreateTransactionDetails as ivctd}
-			<CollapsibleView class="mb-4">
+			<CollapsibleView class="mt-4">
 				<svelte:fragment slot="title">
 					<span class="text-off-800">{ivctd.name}</span>
 					{#if ninou(ivctd.variant_name)}
@@ -95,52 +139,18 @@
 				</svelte:fragment>
 
 				<div slot="body" class="p-4">
-					<div class="grid grid-cols-2 gap-4">
-						<SingleSelect
-							label="From location"
-							options={ivctd.from_location_codes.filter(
-								(fromLocationCode) => fromLocationCode !== ivctd.to_location_code,
-							)}
-							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={ivctd.from_location_code}
-							error={ivctd.errors.from_location_code}
-							onBlur={() =>
-								(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-									ivctd,
-									'from_location_code',
-									iu,
-								))}
-						/>
-
-						<SingleSelect
-							label="To location"
-							options={data.locationCodes.filter(
-								(toLocationCode) => toLocationCode !== ivctd.from_location_code,
-							)}
-							getInputText={Mod.getLocationCodesInputDisplay}
-							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={ivctd.to_location_code}
-							error={ivctd.errors.to_location_code}
-							onBlur={() =>
-								(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
-									ivctd,
-									'to_location_code',
-									iu,
-								))}
-						/>
-					</div>
+					<div class="grid grid-cols-2 gap-4" />
 					<NumberInput
 						label="Quantity"
 						bind:value={ivctd.quantity}
 						error={ivctd.errors.quantity}
 						onBlur={() =>
-							(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
+							(ivctd = CreateValidators.validateItemViewCreateTransactionDetailFieldRequired(
 								ivctd,
 								'quantity',
 								inou,
 							))}
-						class="w-3/4 md:w-1/2 mt-4"
+						class="w-3/4 md:w-1/2"
 					/>
 				</div></CollapsibleView
 			>

@@ -11,14 +11,16 @@ export const getLocationCodesOptionDisplay = (option: Nullable<string>) => inout
 
 export const mapToItemViewCreateTransactionDetail = (
 	itemView: ItemView['Row'],
+	fromLocationCode?: Nullable<string>,
+	toLocationCode?: Nullable<string>,
 ): ItemViewCreateTransactionDetail => {
 	const { id, category_ids, location_codes, ...itemViewOmitted } = itemView;
 	return {
 		...itemViewOmitted,
 		item_id: inout(id, 0),
 		quantity: 0,
-		from_location_code: undefined as any,
-		to_location_code: undefined as any,
+		from_location_code: fromLocationCode as any,
+		to_location_code: toLocationCode as any,
 		from_location_codes: [null, ...inout(location_codes, [])],
 		errors: {},
 	};
