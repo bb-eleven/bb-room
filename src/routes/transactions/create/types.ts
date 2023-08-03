@@ -12,16 +12,25 @@ export type CreateTransactionDetail = ArrayElement<
 	CreateNewTransactionArgs['create_transaction_details']
 >;
 
+export type LocationCodeQuantity = { code: string | null; quantity: number | null };
+
 export type ItemViewCreateTransactionDetail = Omit<
 	ItemView['Row'],
-	'id' | 'category_ids' | 'location_codes'
+	| 'id'
+	| 'category_ids'
+	| 'location_codes'
+	| 'location_quantities'
+	| 'from_location_code'
+	| 'to_location_code'
 > &
-	CreateTransactionDetail & {
-		from_location_codes: Nullable<string>[];
+	Omit<CreateTransactionDetail, 'from_location_code' | 'to_location_code'> & {
+		locationCodeQuantities: LocationCodeQuantity[];
+		fromLocationCodeQuantity: Nullable<LocationCodeQuantity>;
+		toLocationCodeQuantity: Nullable<LocationCodeQuantity>;
 		errors: {
 			[ErrorKey in keyof Pick<
 				ItemViewCreateTransactionDetail,
-				'from_location_code' | 'to_location_code' | 'quantity'
+				'fromLocationCodeQuantity' | 'toLocationCodeQuantity' | 'quantity'
 			>]?: Nullable<string>;
 		};
 	};

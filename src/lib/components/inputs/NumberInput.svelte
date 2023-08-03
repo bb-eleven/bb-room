@@ -29,7 +29,7 @@
 	<div class="text-blue-600 text-sm mb-2">{label}</div>
 	<div class="w-full flex items-center gap-2">
 		<input
-			disabled={ninou(value) && (value <= min || value >= max)}
+			disabled={(ninou(value) && min === max) || value < min || value > max}
 			type="number"
 			{placeholder}
 			bind:value
