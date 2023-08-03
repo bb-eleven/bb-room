@@ -1,5 +1,5 @@
 import type { ItemView } from '$lib/database.types.short';
-import { inout, iu } from '$lib/utils';
+import { inou, inout, iu } from '$lib/utils';
 import type {
 	Author,
 	CreateNewTransactionArgs,
@@ -10,12 +10,23 @@ import type { Database } from '$lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Nullable } from 'vitest';
 
-export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>) =>
-	inout(locationCodeQuantity?.quantity, 99999);
-export const formatQuantityLabel = (locationCodeQuantity: Nullable<LocationCodeQuantity>) =>
-	iu(locationCodeQuantity?.quantity)
-		? 'Quantity'
-		: `Quantity (Max ${getMaxQuantity(locationCodeQuantity)})`;
+export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>) => {
+	if (inou(locationCodeQuantity)) {
+		return 0;
+	}
+
+	// 'Outside'
+	if (locationCodeQuantity.code === null) {
+		return 99999;
+	}
+
+	return locationCodeQuantity.quantity;
+};
+
+export const formatQuantityLabel = (locationCodeQuantity: Nullable<LocationCodeQuantity>) => {
+	const maxQty = getMaxQuantity(locationCodeQuantity);
+	return maxQty === 0 ? "Item doesn't exist in location" : `Quantity (Max ${maxQty})`;
+};
 
 export const formatLocationCodeQuantity = ({ code, quantity }: LocationCodeQuantity): string =>
 	`${code} (${quantity})`;
