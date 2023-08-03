@@ -8,13 +8,18 @@
 	import NumberInput from '$lib/components/inputs/NumberInput.svelte';
 	import SingleSelect from '$lib/components/inputs/selects/SingleSelect.svelte';
 	import type { ItemView } from '$lib/database.types.short';
-	import { inou, iu, ninou } from '$lib/utils';
+	import { inou, inout, iu, ninou } from '$lib/utils';
 	import type { Nullable } from 'vitest';
 	import type { ItemViewMap } from '../../inventory/mod';
-	import * as Mod from '../create/mod';
-	import type { Author, ItemViewCreateTransactionDetail } from '../create/types';
+	import * as Mod from './mod';
+	import type {
+		Author,
+		ItemViewCreateTransactionDetail,
+		LocationCodeQuantity,
+	} from '../create/types';
 	import * as CreateValidators from '../create/validators';
 	import * as Validators from './validators';
+	import * as CreateMod from '../create/mod';
 
 	export let data;
 
@@ -26,9 +31,9 @@
 	let author: Author = {};
 	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
 
-	let fromLocationCode: Nullable<string> = undefined;
+	let fromLocationCode: LocationCodeQuantity | undefined = undefined;
 	let fromLocationCodeError: Nullable<string> = null;
-	let toLocationCode: Nullable<string> = undefined;
+	let toLocationCode: LocationCodeQuantity | undefined = undefined;
 	let toLocationCodeError: Nullable<string> = null;
 
 	let isValid = false;
@@ -38,22 +43,26 @@
 		if (ninou(selectedItemViewsStr)) {
 			itemViews = Object.values(JSON.parse(selectedItemViewsStr) as ItemViewMap);
 			itemViewCreateTransactionDetails = itemViews.map((iv) =>
-				Mod.mapToItemViewCreateTransactionDetail(iv, fromLocationCode, toLocationCode),
+				CreateMod.mapToItemViewCreateTransactionDetail(iv, fromLocationCode, toLocationCode),
 			);
 		}
 	}
 
-	$: itemViewCreateTransactionDetails.forEach(
-		(_ivctd, i) =>
-			(itemViewCreateTransactionDetails[i].from_location_code = fromLocationCode as string),
-	);
-	$: itemViewCreateTransactionDetails.forEach(
-		(_ivctd, i) =>
-			(itemViewCreateTransactionDetails[i].to_location_code = toLocationCode as string),
-	);
+	$: itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
+		itemViewCreateTransactionDetails[i].fromLocationCodeQuantity =
+			Mod.findLocationCodeQuantityByCode(
+				inout(itemViewCreateTransactionDetails[i].locationCodeQuantities, []),
+				fromLocationCode?.code,
+			);
+	});
+	$: itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
+		itemViewCreateTransactionDetails[i].toLocationCodeQuantity = Mod.findLocationCodeQuantityByCode(
+			inout(itemViewCreateTransactionDetails[i].locationCodeQuantities, []),
+			toLocationCode?.code,
+		);
+	});
 
 	const submit = async () => {
-		console.log(itemViewCreateTransactionDetails);
 		author = CreateValidators.validateAuthor(author);
 
 		fromLocationCodeError = Validators.validateLocationCode(fromLocationCode);
@@ -75,7 +84,7 @@
 		}
 
 		// Author is validated above
-		const { data: transactionId, error } = await Mod.createTransaction(
+		const { data: transactionId, error } = await CreateMod.createTransaction(
 			data.supabase,
 			author as any,
 			itemViewCreateTransactionDetails,
@@ -83,10 +92,6 @@
 
 		if (browser) {
 			localStorage.removeItem('selectedItemViews');
-		}
-
-		// TODO: Go to new page
-		if (browser) {
 			goto('/inventory');
 		}
 	};
@@ -111,7 +116,7 @@
 		/>
 		<SingleSelect
 			label="From location"
-			options={data.locationCodes.filter((fromLocationCode) => fromLocationCode !== toLocationCode)}
+			options={data.locationCodeQuantities.filter(({ code }) => code !== toLocationCode?.code)}
 			getInputText={Mod.getLocationCodesInputDisplay}
 			getOptionText={Mod.getLocationCodesOptionDisplay}
 			bind:selected={fromLocationCode}
@@ -121,7 +126,7 @@
 
 		<SingleSelect
 			label="To location"
-			options={data.locationCodes.filter((toLocationCode) => toLocationCode !== fromLocationCode)}
+			options={data.locationCodeQuantities.filter(({ code }) => code !== fromLocationCode?.code)}
 			getInputText={Mod.getLocationCodesInputDisplay}
 			getOptionText={Mod.getLocationCodesOptionDisplay}
 			bind:selected={toLocationCode}

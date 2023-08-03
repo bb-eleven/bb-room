@@ -1,7 +1,15 @@
+import type { LocationCodeQuantity } from '../create/types';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ locals: { supabase } }) => {
+export const load: PageServerLoad = async ({
+	locals: { supabase },
+}): Promise<{ locationCodeQuantities: LocationCodeQuantity[] }> => {
 	const locations = (await supabase.from('location').select()).data ?? [];
 
-	return { locationCodes: [null, ...locations.map(({ code }) => code)] };
+	return {
+		locationCodeQuantities: [
+			{ code: null, quantity: null },
+			...locations.map(({ code }) => ({ code, quantity: null })),
+		],
+	};
 };

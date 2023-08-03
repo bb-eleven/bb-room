@@ -58,10 +58,6 @@
 
 		if (browser) {
 			localStorage.removeItem('selectedItemViews');
-		}
-
-		// TODO: Go to new page
-		if (browser) {
 			goto('/inventory');
 		}
 	};
@@ -98,42 +94,43 @@
 					<div class="grid grid-cols-2 gap-4">
 						<SingleSelect
 							label="From location"
-							options={ivctd.from_location_codes.filter(
-								(fromLocationCode) => fromLocationCode !== ivctd.to_location_code,
+							options={ivctd.locationCodeQuantities.filter(
+								(fromLocationCode) => fromLocationCode !== ivctd.toLocationCodeQuantity,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={ivctd.from_location_code}
-							error={ivctd.errors.from_location_code}
+							bind:selected={ivctd.fromLocationCodeQuantity}
+							error={ivctd.errors.fromLocationCodeQuantity}
 							onBlur={() =>
 								(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
 									ivctd,
-									'from_location_code',
+									'fromLocationCodeQuantity',
 									iu,
 								))}
 						/>
 
 						<SingleSelect
 							label="To location"
-							options={data.locationCodes.filter(
-								(toLocationCode) => toLocationCode !== ivctd.from_location_code,
+							options={ivctd.locationCodeQuantities.filter(
+								({ code }) => code !== ivctd.fromLocationCodeQuantity?.code,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={Mod.getLocationCodesOptionDisplay}
-							bind:selected={ivctd.to_location_code}
-							error={ivctd.errors.to_location_code}
+							bind:selected={ivctd.toLocationCodeQuantity}
+							error={ivctd.errors.toLocationCodeQuantity}
 							onBlur={() =>
 								(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
 									ivctd,
-									'to_location_code',
+									'toLocationCodeQuantity',
 									iu,
 								))}
 						/>
 					</div>
 					<NumberInput
-						label="Quantity"
+						label="Quantity (Max {ivctd.fromLocationCodeQuantity?.quantity ?? 99999})"
 						bind:value={ivctd.quantity}
 						error={ivctd.errors.quantity}
+						max={ivctd.fromLocationCodeQuantity?.quantity ?? 99999}
 						onBlur={() =>
 							(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
 								ivctd,
