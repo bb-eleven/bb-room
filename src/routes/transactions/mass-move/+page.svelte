@@ -146,9 +146,10 @@
 				<div slot="body" class="p-4">
 					<div class="grid grid-cols-2 gap-4" />
 					<NumberInput
-						label="Quantity"
+						label={CreateMod.formatQuantityLabel(ivctd.fromLocationCodeQuantity)}
 						bind:value={ivctd.quantity}
 						error={ivctd.errors.quantity}
+						max={CreateMod.getMaxQuantity(ivctd.fromLocationCodeQuantity)}
 						onBlur={() =>
 							(ivctd = CreateValidators.validateItemViewCreateTransactionDetailFieldRequired(
 								ivctd,

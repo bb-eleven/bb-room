@@ -8,6 +8,14 @@ import type {
 } from './types';
 import type { Database } from '$lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Nullable } from 'vitest';
+
+export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>) =>
+	inout(locationCodeQuantity?.quantity, 99999);
+export const formatQuantityLabel = (locationCodeQuantity: Nullable<LocationCodeQuantity>) =>
+	iu(locationCodeQuantity?.quantity)
+		? 'Quantity'
+		: `Quantity (Max ${getMaxQuantity(locationCodeQuantity)})`;
 
 export const formatLocationCodeQuantity = ({ code, quantity }: LocationCodeQuantity): string =>
 	`${code} (${quantity})`;

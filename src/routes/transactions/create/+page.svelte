@@ -127,10 +127,10 @@
 						/>
 					</div>
 					<NumberInput
-						label="Quantity (Max {ivctd.fromLocationCodeQuantity?.quantity ?? 99999})"
+						label={Mod.formatQuantityLabel(ivctd.fromLocationCodeQuantity)}
 						bind:value={ivctd.quantity}
 						error={ivctd.errors.quantity}
-						max={ivctd.fromLocationCodeQuantity?.quantity ?? 99999}
+						max={Mod.getMaxQuantity(ivctd.fromLocationCodeQuantity)}
 						onBlur={() =>
 							(ivctd = Validators.validateItemViewCreateTransactionDetailFieldRequired(
 								ivctd,
