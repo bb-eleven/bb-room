@@ -1,13 +1,13 @@
 import { inou, iu, ninou } from '$lib/utils';
 import type { Nullable } from 'vitest';
-import type { Author, ItemViewCreateTransactionDetail } from './types';
+import type { ValidateText, ItemViewCreateTransactionDetail } from './types';
 
-export const validateAuthor = (author: Author): Author => {
-	author.error = inou(author.value) || author.value === '' ? 'Required' : null;
-	return author;
+export const validateText = (validateText: ValidateText): ValidateText => {
+	validateText.error = inou(validateText.value) || validateText.value === '' ? 'Required' : null;
+	return validateText;
 };
 
-export const authorHasNoError = (author: Author) => inou(author.error);
+export const validateTextHasNoError = (validateText: ValidateText) => inou(validateText.error);
 
 export const itemViewCreateTransactionDetailHasNoError = (
 	itemViewCreateTransactionDetail: ItemViewCreateTransactionDetail,
@@ -43,12 +43,12 @@ export const validateItemViewCreateTransactionDetail = (
 ): ItemViewCreateTransactionDetail => {
 	validateItemViewCreateTransactionDetailFieldRequired(
 		itemViewCreateTransactionDetail,
-		'from_location_code',
+		'fromLocationCodeQuantity',
 		iu,
 	);
 	validateItemViewCreateTransactionDetailFieldRequired(
 		itemViewCreateTransactionDetail,
-		'to_location_code',
+		'toLocationCodeQuantity',
 		iu,
 	);
 	validateItemViewCreateTransactionDetailFieldRequired(

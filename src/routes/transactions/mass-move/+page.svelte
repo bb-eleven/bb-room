@@ -13,7 +13,7 @@
 	import type { ItemViewMap } from '../../inventory/mod';
 	import * as Mod from './mod';
 	import type {
-		Author,
+		ValidateText,
 		ItemViewCreateTransactionDetail,
 		LocationCodeQuantity,
 	} from '../create/types';
@@ -28,13 +28,14 @@
 	}
 
 	let itemViews: ItemView['Row'][] = [];
-	let author: Author = {};
+	let author: ValidateText = {};
+	let purpose: ValidateText = {};
 	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
 
-	let fromLocationCode: LocationCodeQuantity | undefined = undefined;
-	let fromLocationCodeError: Nullable<string> = null;
-	let toLocationCode: LocationCodeQuantity | undefined = undefined;
-	let toLocationCodeError: Nullable<string> = null;
+	let fromLocationCodeQuantity: LocationCodeQuantity | undefined = undefined;
+	let fromLocationCodeQuantityError: Nullable<string> = null;
+	let toLocationCodeQuantity: LocationCodeQuantity | undefined = undefined;
+	let toLocationCodeQuantityError: Nullable<string> = null;
 
 	let isValid = false;
 
@@ -43,35 +44,44 @@
 		if (ninou(selectedItemViewsStr)) {
 			itemViews = Object.values(JSON.parse(selectedItemViewsStr) as ItemViewMap);
 			itemViewCreateTransactionDetails = itemViews.map((iv) =>
-				CreateMod.mapToItemViewCreateTransactionDetail(iv, fromLocationCode, toLocationCode),
+				CreateMod.mapToItemViewCreateTransactionDetail(
+					iv,
+					fromLocationCodeQuantity,
+					toLocationCodeQuantity,
+				),
 			);
 		}
 	}
 
-	$: itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
-		itemViewCreateTransactionDetails[i].fromLocationCodeQuantity =
-			Mod.findLocationCodeQuantityByCode(
-				inout(itemViewCreateTransactionDetails[i].locationCodeQuantities, []),
-				fromLocationCode?.code,
-			);
-	});
-	$: itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
-		itemViewCreateTransactionDetails[i].toLocationCodeQuantity = Mod.findLocationCodeQuantityByCode(
-			inout(itemViewCreateTransactionDetails[i].locationCodeQuantities, []),
-			toLocationCode?.code,
-		);
-	});
+	const updateAllFromLocationCodes = () =>
+		itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
+			itemViewCreateTransactionDetails[i].fromLocationCodeQuantity =
+				Mod.findLocationCodeQuantityByCode(
+					inout(itemViewCreateTransactionDetails[i].locationCodeQuantities, []),
+					fromLocationCodeQuantity?.code,
+				);
+		});
+	const updateAllToLocationCodes = () =>
+		itemViewCreateTransactionDetails.forEach((_ivctd, i) => {
+			itemViewCreateTransactionDetails[i].toLocationCodeQuantity =
+				Mod.findLocationCodeQuantityByCode(
+					inout(data.locationCodeQuantities, []),
+					toLocationCodeQuantity?.code,
+				);
+		});
 
 	const submit = async () => {
-		author = CreateValidators.validateAuthor(author);
+		author = CreateValidators.validateText(author);
+		purpose = CreateValidators.validateText(purpose);
 
-		fromLocationCodeError = Validators.validateLocationCode(fromLocationCode);
-		toLocationCodeError = Validators.validateLocationCode(toLocationCode);
+		fromLocationCodeQuantityError = Validators.validateLocationCode(fromLocationCodeQuantity);
+		toLocationCodeQuantityError = Validators.validateLocationCode(toLocationCodeQuantity);
 
 		isValid =
-			CreateValidators.authorHasNoError(author) &&
-			inou(fromLocationCodeError) &&
-			inou(toLocationCodeError);
+			CreateValidators.validateTextHasNoError(author) &&
+			CreateValidators.validateTextHasNoError(purpose) &&
+			inou(fromLocationCodeQuantityError) &&
+			inou(toLocationCodeQuantityError);
 
 		itemViewCreateTransactionDetails = itemViewCreateTransactionDetails.map((ivctd) => {
 			ivctd = CreateValidators.validateItemViewCreateTransactionDetail(ivctd);
@@ -87,8 +97,11 @@
 		const { data: transactionId, error } = await CreateMod.createTransaction(
 			data.supabase,
 			author as any,
+			purpose as any,
 			itemViewCreateTransactionDetails,
 		);
+
+		console.log(transactionId, error);
 
 		if (browser) {
 			localStorage.removeItem('selectedItemViews');
@@ -112,26 +125,42 @@
 			label="Author"
 			bind:value={author.value}
 			error={author.error}
-			onBlur={() => (author = CreateValidators.validateAuthor(author))}
+			onBlur={() => (author = CreateValidators.validateText(author))}
+		/>
+		<Input
+			label="Purpose"
+			bind:value={purpose.value}
+			error={purpose.error}
+			onBlur={() => (purpose = CreateValidators.validateText(purpose))}
 		/>
 		<SingleSelect
 			label="From location"
-			options={data.locationCodeQuantities.filter(({ code }) => code !== toLocationCode?.code)}
+			options={data.locationCodeQuantities.filter(
+				({ code }) => code !== toLocationCodeQuantity?.code,
+			)}
 			getInputText={Mod.getLocationCodesInputDisplay}
 			getOptionText={Mod.getLocationCodesOptionDisplay}
-			bind:selected={fromLocationCode}
-			error={fromLocationCodeError}
-			onBlur={() => (fromLocationCodeError = Validators.validateLocationCode(fromLocationCode))}
+			bind:selected={fromLocationCodeQuantity}
+			error={fromLocationCodeQuantityError}
+			onBlur={() => {
+				fromLocationCodeQuantityError = Validators.validateLocationCode(fromLocationCodeQuantity);
+				updateAllFromLocationCodes();
+			}}
 		/>
 
 		<SingleSelect
 			label="To location"
-			options={data.locationCodeQuantities.filter(({ code }) => code !== fromLocationCode?.code)}
+			options={data.locationCodeQuantities.filter(
+				({ code }) => code !== fromLocationCodeQuantity?.code,
+			)}
 			getInputText={Mod.getLocationCodesInputDisplay}
 			getOptionText={Mod.getLocationCodesOptionDisplay}
-			bind:selected={toLocationCode}
-			error={toLocationCodeError}
-			onBlur={() => (toLocationCodeError = Validators.validateLocationCode(toLocationCode))}
+			bind:selected={toLocationCodeQuantity}
+			error={toLocationCodeQuantityError}
+			onBlur={() => {
+				toLocationCodeQuantityError = Validators.validateLocationCode(toLocationCodeQuantity);
+				updateAllToLocationCodes();
+			}}
 		/>
 
 		{#each itemViewCreateTransactionDetails as ivctd}

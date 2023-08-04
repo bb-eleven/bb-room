@@ -74,9 +74,11 @@ export const mapToItemViewCreateTransactionDetail = (
 
 const mapToCreateNewTransactionArgs = (
 	author: Required<ValidateText>,
+	purpose: Required<ValidateText>,
 	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
 ): CreateNewTransactionArgs => ({
 	_author: author.value,
+	_purpose: purpose.value,
 	create_transaction_details: itemViewCreateTransactionDetails.map(
 		({ item_id, quantity, fromLocationCodeQuantity, toLocationCodeQuantity }) => ({
 			item_id,
@@ -90,10 +92,11 @@ const mapToCreateNewTransactionArgs = (
 export const createTransaction = async (
 	supabase: SupabaseClient<Database>,
 	author: Required<ValidateText>,
+	purpose: Required<ValidateText>,
 	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
 ) => {
 	return await supabase.rpc(
 		'create_new_transaction',
-		mapToCreateNewTransactionArgs(author, itemViewCreateTransactionDetails),
+		mapToCreateNewTransactionArgs(author, purpose, itemViewCreateTransactionDetails),
 	);
 };

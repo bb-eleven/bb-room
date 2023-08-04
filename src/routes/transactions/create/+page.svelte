@@ -11,7 +11,7 @@
 	import { inou, iu, ninou } from '$lib/utils';
 	import type { ItemViewMap } from '../../inventory/mod';
 	import * as Mod from './mod';
-	import type { Author, ItemViewCreateTransactionDetail } from './types';
+	import type { ValidateText, ItemViewCreateTransactionDetail } from './types';
 	import * as Validators from './validators';
 
 	export let data;
@@ -21,7 +21,8 @@
 	}
 
 	let itemViews: ItemView['Row'][] = [];
-	let author: Author = {};
+	let author: ValidateText = {};
+	let purpose: ValidateText = {};
 	let itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[] = [];
 	let isValid = false;
 
@@ -36,8 +37,10 @@
 	}
 
 	const submit = async () => {
-		author = Validators.validateAuthor(author);
-		isValid = Validators.authorHasNoError(author);
+		author = Validators.validateText(author);
+		purpose = Validators.validateText(purpose);
+		isValid =
+			Validators.validateTextHasNoError(author) && Validators.validateTextHasNoError(purpose);
 
 		itemViewCreateTransactionDetails = itemViewCreateTransactionDetails.map((ivctd) => {
 			ivctd = Validators.validateItemViewCreateTransactionDetail(ivctd);
@@ -53,6 +56,7 @@
 		const { data: transactionId, error } = await Mod.createTransaction(
 			data.supabase,
 			author as any,
+			purpose as any,
 			itemViewCreateTransactionDetails,
 		);
 
@@ -78,7 +82,14 @@
 			label="Author"
 			bind:value={author.value}
 			error={author.error}
-			onBlur={() => (author = Validators.validateAuthor(author))}
+			onBlur={() => (author = Validators.validateText(author))}
+			class="mb-4"
+		/>
+		<Input
+			label="Purpose"
+			bind:value={purpose.value}
+			error={purpose.error}
+			onBlur={() => (purpose = Validators.validateText(purpose))}
 			class="mb-4"
 		/>
 		{#each itemViewCreateTransactionDetails as ivctd}
@@ -95,7 +106,7 @@
 						<SingleSelect
 							label="From location"
 							options={ivctd.locationCodeQuantities.filter(
-								(fromLocationCode) => fromLocationCode !== ivctd.toLocationCodeQuantity,
+								({ code }) => code !== ivctd.toLocationCodeQuantity?.code,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}
 							getOptionText={Mod.getLocationCodesOptionDisplay}
@@ -111,7 +122,7 @@
 
 						<SingleSelect
 							label="To location"
-							options={ivctd.locationCodeQuantities.filter(
+							options={data.locationCodeQuantities.filter(
 								({ code }) => code !== ivctd.fromLocationCodeQuantity?.code,
 							)}
 							getInputText={Mod.getLocationCodesInputDisplay}

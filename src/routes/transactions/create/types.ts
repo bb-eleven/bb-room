@@ -3,7 +3,7 @@ import type { Nullable } from 'vitest';
 import type { Database } from '../../../database.types';
 import type { ArrayElement } from '$lib/utils';
 
-export type Author = { value?: string; error?: Nullable<string> };
+export type ValidateText = { value?: string; error?: Nullable<string> };
 
 export type CreateNewTransactionArgs =
 	Database['public']['Functions']['create_new_transaction']['Args'];
