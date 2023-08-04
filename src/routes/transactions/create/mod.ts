@@ -1,7 +1,7 @@
 import type { ItemView } from '$lib/database.types.short';
 import { inou, inout, iu } from '$lib/utils';
 import type {
-	Author,
+	ValidateText,
 	CreateNewTransactionArgs,
 	ItemViewCreateTransactionDetail,
 	LocationCodeQuantity,
@@ -11,12 +11,12 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Nullable } from 'vitest';
 
 export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>): number => {
-	if (inou(locationCodeQuantity) || inou(locationCodeQuantity.quantity)) {
+	if (inou(locationCodeQuantity) || iu(locationCodeQuantity.quantity)) {
 		return 0;
 	}
 
 	// 'Outside'
-	if (locationCodeQuantity.code === null) {
+	if (locationCodeQuantity.code === null || locationCodeQuantity.quantity === null) {
 		return 99999;
 	}
 
@@ -73,7 +73,7 @@ export const mapToItemViewCreateTransactionDetail = (
 };
 
 const mapToCreateNewTransactionArgs = (
-	author: Required<Author>,
+	author: Required<ValidateText>,
 	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
 ): CreateNewTransactionArgs => ({
 	_author: author.value,
@@ -89,7 +89,7 @@ const mapToCreateNewTransactionArgs = (
 
 export const createTransaction = async (
 	supabase: SupabaseClient<Database>,
-	author: Required<Author>,
+	author: Required<ValidateText>,
 	itemViewCreateTransactionDetails: ItemViewCreateTransactionDetail[],
 ) => {
 	return await supabase.rpc(
