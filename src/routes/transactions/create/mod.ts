@@ -29,7 +29,7 @@ export const formatQuantityLabel = (locationCodeQuantity: Nullable<LocationCodeQ
 };
 
 export const formatLocationCodeQuantity = ({ code, quantity }: LocationCodeQuantity): string =>
-	`${code} (${quantity})`;
+	inou(quantity) ? `${code}` : `${code} (${quantity})`;
 
 export const getLocationCodesInputDisplay = (selected?: LocationCodeQuantity) => {
 	return iu(selected)
