@@ -10,8 +10,8 @@ import type { Database } from '$lib/database.types';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Nullable } from 'vitest';
 
-export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>) => {
-	if (inou(locationCodeQuantity)) {
+export const getMaxQuantity = (locationCodeQuantity: Nullable<LocationCodeQuantity>): number => {
+	if (inou(locationCodeQuantity) || inou(locationCodeQuantity.quantity)) {
 		return 0;
 	}
 
