@@ -1,31 +1,6 @@
-export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
-	graphql_public: {
-		Tables: {
-			[_ in never]: never;
-		};
-		Views: {
-			[_ in never]: never;
-		};
-		Functions: {
-			graphql: {
-				Args: {
-					operationName?: string;
-					query?: string;
-					variables?: Json;
-					extensions?: Json;
-				};
-				Returns: Json;
-			};
-		};
-		Enums: {
-			[_ in never]: never;
-		};
-		CompositeTypes: {
-			[_ in never]: never;
-		};
-	};
 	public: {
 		Tables: {
 			category: {
@@ -41,6 +16,7 @@ export interface Database {
 					id?: number;
 					name?: string;
 				};
+				Relationships: [];
 			};
 			item: {
 				Row: {
@@ -64,6 +40,7 @@ export interface Database {
 					quantity_metric?: string | null;
 					variant_name?: string | null;
 				};
+				Relationships: [];
 			};
 			item_category: {
 				Row: {
@@ -78,6 +55,26 @@ export interface Database {
 					category_id?: number;
 					item_id?: number;
 				};
+				Relationships: [
+					{
+						foreignKeyName: 'item_category_category_id_fkey';
+						columns: ['category_id'];
+						referencedRelation: 'category';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'item_category_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'item_category_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item_view';
+						referencedColumns: ['id'];
+					},
+				];
 			};
 			item_location: {
 				Row: {
@@ -95,6 +92,26 @@ export interface Database {
 					location_id?: number;
 					quantity?: number;
 				};
+				Relationships: [
+					{
+						foreignKeyName: 'item_location_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'item_location_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item_view';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'item_location_location_id_fkey';
+						columns: ['location_id'];
+						referencedRelation: 'location';
+						referencedColumns: ['id'];
+					},
+				];
 			};
 			location: {
 				Row: {
@@ -112,46 +129,89 @@ export interface Database {
 					description?: string | null;
 					id?: number;
 				};
+				Relationships: [];
 			};
 			transaction: {
 				Row: {
 					author: string;
 					id: number;
+					purpose: string;
 					timestamp: string;
 				};
 				Insert: {
 					author: string;
 					id?: number;
+					purpose: string;
 					timestamp?: string;
 				};
 				Update: {
 					author?: string;
 					id?: number;
+					purpose?: string;
 					timestamp?: string;
 				};
+				Relationships: [];
 			};
 			transaction_detail: {
 				Row: {
 					from_location_id: number | null;
 					item_id: number;
-					quantity: number;
+					new_from_quantity: number | null;
+					new_to_quantity: number | null;
+					quantity_moved: number;
 					to_location_id: number | null;
 					transaction_id: number;
 				};
 				Insert: {
 					from_location_id?: number | null;
 					item_id: number;
-					quantity: number;
+					new_from_quantity?: number | null;
+					new_to_quantity?: number | null;
+					quantity_moved: number;
 					to_location_id?: number | null;
 					transaction_id: number;
 				};
 				Update: {
 					from_location_id?: number | null;
 					item_id?: number;
-					quantity?: number;
+					new_from_quantity?: number | null;
+					new_to_quantity?: number | null;
+					quantity_moved?: number;
 					to_location_id?: number | null;
 					transaction_id?: number;
 				};
+				Relationships: [
+					{
+						foreignKeyName: 'transaction_detail_from_location_id_fkey';
+						columns: ['from_location_id'];
+						referencedRelation: 'location';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'transaction_detail_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'transaction_detail_item_id_fkey';
+						columns: ['item_id'];
+						referencedRelation: 'item_view';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'transaction_detail_to_location_id_fkey';
+						columns: ['to_location_id'];
+						referencedRelation: 'location';
+						referencedColumns: ['id'];
+					},
+					{
+						foreignKeyName: 'transaction_detail_transaction_id_fkey';
+						columns: ['transaction_id'];
+						referencedRelation: 'transaction';
+						referencedColumns: ['id'];
+					},
+				];
 			};
 		};
 		Views: {
@@ -165,6 +225,7 @@ export interface Database {
 					name: string | null;
 					variant_name: string | null;
 				};
+				Relationships: [];
 			};
 		};
 		Functions: {
@@ -225,13 +286,22 @@ export interface Database {
 				};
 				Returns: string;
 			};
-			create_new_transaction: {
-				Args: {
-					_author: string;
-					create_transaction_details: Database['public']['CompositeTypes']['create_transaction_detail'][];
-				};
-				Returns: number;
-			};
+			create_new_transaction:
+				| {
+						Args: {
+							_author: string;
+							create_transaction_details: Database['public']['CompositeTypes']['create_transaction_detail'][];
+						};
+						Returns: number;
+				  }
+				| {
+						Args: {
+							_author: string;
+							_purpose: string;
+							create_transaction_details: Database['public']['CompositeTypes']['create_transaction_detail'][];
+						};
+						Returns: number;
+				  };
 			filter_item_view: {
 				Args: {
 					_name_query: string;
@@ -259,168 +329,6 @@ export interface Database {
 				from_location_code: string;
 				to_location_code: string;
 			};
-		};
-	};
-	storage: {
-		Tables: {
-			buckets: {
-				Row: {
-					allowed_mime_types: string[] | null;
-					avif_autodetection: boolean | null;
-					created_at: string | null;
-					file_size_limit: number | null;
-					id: string;
-					name: string;
-					owner: string | null;
-					public: boolean | null;
-					updated_at: string | null;
-				};
-				Insert: {
-					allowed_mime_types?: string[] | null;
-					avif_autodetection?: boolean | null;
-					created_at?: string | null;
-					file_size_limit?: number | null;
-					id: string;
-					name: string;
-					owner?: string | null;
-					public?: boolean | null;
-					updated_at?: string | null;
-				};
-				Update: {
-					allowed_mime_types?: string[] | null;
-					avif_autodetection?: boolean | null;
-					created_at?: string | null;
-					file_size_limit?: number | null;
-					id?: string;
-					name?: string;
-					owner?: string | null;
-					public?: boolean | null;
-					updated_at?: string | null;
-				};
-			};
-			migrations: {
-				Row: {
-					executed_at: string | null;
-					hash: string;
-					id: number;
-					name: string;
-				};
-				Insert: {
-					executed_at?: string | null;
-					hash: string;
-					id: number;
-					name: string;
-				};
-				Update: {
-					executed_at?: string | null;
-					hash?: string;
-					id?: number;
-					name?: string;
-				};
-			};
-			objects: {
-				Row: {
-					bucket_id: string | null;
-					created_at: string | null;
-					id: string;
-					last_accessed_at: string | null;
-					metadata: Json | null;
-					name: string | null;
-					owner: string | null;
-					path_tokens: string[] | null;
-					updated_at: string | null;
-					version: string | null;
-				};
-				Insert: {
-					bucket_id?: string | null;
-					created_at?: string | null;
-					id?: string;
-					last_accessed_at?: string | null;
-					metadata?: Json | null;
-					name?: string | null;
-					owner?: string | null;
-					path_tokens?: string[] | null;
-					updated_at?: string | null;
-					version?: string | null;
-				};
-				Update: {
-					bucket_id?: string | null;
-					created_at?: string | null;
-					id?: string;
-					last_accessed_at?: string | null;
-					metadata?: Json | null;
-					name?: string | null;
-					owner?: string | null;
-					path_tokens?: string[] | null;
-					updated_at?: string | null;
-					version?: string | null;
-				};
-			};
-		};
-		Views: {
-			[_ in never]: never;
-		};
-		Functions: {
-			can_insert_object: {
-				Args: {
-					bucketid: string;
-					name: string;
-					owner: string;
-					metadata: Json;
-				};
-				Returns: undefined;
-			};
-			extension: {
-				Args: {
-					name: string;
-				};
-				Returns: string;
-			};
-			filename: {
-				Args: {
-					name: string;
-				};
-				Returns: string;
-			};
-			foldername: {
-				Args: {
-					name: string;
-				};
-				Returns: string[];
-			};
-			get_size_by_bucket: {
-				Args: Record<PropertyKey, never>;
-				Returns: {
-					size: number;
-					bucket_id: string;
-				}[];
-			};
-			search: {
-				Args: {
-					prefix: string;
-					bucketname: string;
-					limits?: number;
-					levels?: number;
-					offsets?: number;
-					search?: string;
-					sortcolumn?: string;
-					sortorder?: string;
-				};
-				Returns: {
-					name: string;
-					id: string;
-					updated_at: string;
-					created_at: string;
-					last_accessed_at: string;
-					metadata: Json;
-				}[];
-			};
-		};
-		Enums: {
-			[_ in never]: never;
-		};
-		CompositeTypes: {
-			[_ in never]: never;
 		};
 	};
 }
