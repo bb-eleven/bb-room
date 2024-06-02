@@ -14,3 +14,5 @@ Website for managing inventory.
 4. Create `.env.local` file with the following properties\
    `VITE_SUPABASE_URL='<API URL>'`\
    `VITE_SUPABASE_ANON_KEY='<anon key>'`
+5. Run the website\
+   `npm run dev`
